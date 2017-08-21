@@ -25,6 +25,7 @@ namespace Shift
             System.Windows.Forms.Application.EnableVisualStyles();
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
             System.Windows.Forms.Application.Run(new Form1());
+            Console.WriteLine(System.IO.Path.GetDirectoryName(Application.ExecutablePath));
             XlSetup();
             XlCleanup();
         }
@@ -64,6 +65,7 @@ namespace Shift
             Marshal.ReleaseComObject(xlApp);
             Console.WriteLine("objects released");
         }
+
         
 
 
