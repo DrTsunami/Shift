@@ -7,3 +7,12 @@ C:\Users\Ryan\Documents\GitHub\Shift\Shift\bin\Debug\Shift.exe
 C:\Users\Ryan\Documents\GitHub\Shift\Shift\bin\Debug\Shift.pdb
 C:\Users\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.exe
 C:\Users\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.pdb
+D:\Ryan\Documents\GitHub\Shift\Shift\bin\Debug\Shift.exe.config
+D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.csproj.ResolveComReference.cache
+D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.exe
+D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.pdb
+D:\Ryan\Documents\GitHub\Shift\Shift\bin\Debug\Shift.exe
+D:\Ryan\Documents\GitHub\Shift\Shift\bin\Debug\Shift.pdb
+D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.csprojResolveAssemblyReference.cache
+D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.Properties.Resources.resources
+D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.csproj.GenerateResource.Cache

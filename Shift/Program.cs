@@ -14,7 +14,8 @@ namespace Shift
         // Creating reference objects
         static Excel.Application xlApp = new Excel.Application();
         // TODO figure out the path problem, bitch
-        static Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(@"C:\Users\Ryan\Documents\GitHub\Shift\Shift\Responses.xlsx");
+        //static Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(@"C:\Users\Ryan\Documents\GitHub\Shift\Shift\Responses.xlsx");
+        static Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(@"D:\Ryan\Documents\GitHub\Shift\Shift\sheets\Responses.xlsx");
         static Excel.Worksheet xlWorksheet = xlWorkbook.Sheets[1];
         static Excel.Range xlRange = xlWorksheet.UsedRange;
         
@@ -26,6 +27,11 @@ namespace Shift
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
             System.Windows.Forms.Application.Run(new Form1());
             Console.WriteLine(System.IO.Path.GetDirectoryName(Application.ExecutablePath));
+            String[] names = getNames();
+            foreach (String name in names)
+            {
+                Console.WriteLine(name);
+            }
             XlSetup();
             XlCleanup();
         }
@@ -49,7 +55,7 @@ namespace Shift
             }
         }
 
-        // General cleanup. Releases Com objects. Takes care of Excel instance staying open after program finishes
+        // FIXME General cleanup. Releases Com objects. Takes care of Excel instance staying open after program finishes
         static void XlCleanup()
         {
             GC.Collect();
@@ -64,6 +70,20 @@ namespace Shift
             xlApp.Quit();
             Marshal.ReleaseComObject(xlApp);
             Console.WriteLine("objects released");
+        }
+
+        static String[] getNames()
+        {
+            int shiftsPerWeek = 28;
+            int rowStart = 2;
+            int rowEnd = 29;
+            int colNumber = 2;
+            String[] names = new String[shiftsPerWeek];
+            for (int i = rowStart; i < rowEnd; i++)
+            {
+                names[i - rowStart] = xlWorksheet.Cells[i, colNumber].Value;
+            }
+            return names;
         }
 
         
