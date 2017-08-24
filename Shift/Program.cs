@@ -58,8 +58,6 @@ namespace Shift
         // FIXME General cleanup. Releases Com objects. Takes care of Excel instance staying open after program finishes
         static void XlCleanup()
         {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
 
             Marshal.ReleaseComObject(xlRange);
             Marshal.ReleaseComObject(xlWorksheet);
