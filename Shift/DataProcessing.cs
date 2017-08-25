@@ -8,6 +8,9 @@ namespace Shift
 {
     class DataProcessing
     {
-        
+        public DateTime[] parse(String prefs)
+        {
+            // do something
+        }
     }
 }
