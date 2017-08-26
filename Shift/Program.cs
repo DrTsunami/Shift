@@ -56,15 +56,17 @@ namespace Shift
             ////////////////////////////////////////////////////////////////
 
             createPersons(names, prefs, timestamps, seniority);
-            
+            DataProcessing dp = new DataProcessing();
+            dp.parse();
+
+
             checkRowCol(xlRange);
             XlCleanup(xlApp, xlWorkbook, xlWorksheet, xlRange);
 
             ////////////////////////////////////////////////////////////////
             // TESTING
             ////////////////////////////////////////////////////////////////
-            DataProcessing dp = new DataProcessing();
-            dp.parse();
+            
             
 
             ////////////////////////////////////////////////////////////////
