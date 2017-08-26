@@ -53,12 +53,21 @@ namespace Shift
 
             Person[] persons = new Person[28];
 
-            ////////////////////////////////
+            ////////////////////////////////////////////////////////////////
 
             createPersons(names, prefs, timestamps, seniority);
             
             checkRowCol(xlRange);
             XlCleanup(xlApp, xlWorkbook, xlWorksheet, xlRange);
+
+            ////////////////////////////////////////////////////////////////
+            // TESTING
+            ////////////////////////////////////////////////////////////////
+            DataProcessing dp = new DataProcessing();
+            dp.parse();
+            
+
+            ////////////////////////////////////////////////////////////////
         }
 
 

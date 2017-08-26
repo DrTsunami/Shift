@@ -9,7 +9,7 @@ namespace Shift
     class Person
     {
         String name;
-        DateTime[] prefs;
+        int[] prefs;
         DateTime timestamp;
         int seniority;
 
