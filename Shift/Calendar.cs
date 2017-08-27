@@ -32,12 +32,9 @@ namespace Shift
         {
             shifts[index] = value;
         }
+        
 
-        public int GetValue (int index)
-        {
-            return (shifts[index]);
-        }
-
+        // prints out to the console
         public void ConsoleOut ()
         {
             System.Console.WriteLine();

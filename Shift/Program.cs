@@ -67,26 +67,24 @@ namespace Shift
 
             Person[] persons = new Person[28];
 
-            // Data processing
             DataProcessing dp = new DataProcessing();
-            persons = CreatePersons(dp, names, prefs, timestamps, seniority);
-            
+
+            ////////////////////////////////////////////////////////////////
+            // METHODS
+            ////////////////////////////////////////////////////////////////
+
+            // Diagnostics
             CheckDataRange(xlRange);
 
-            ////////////////////////////////////////////////////////////////
-            // TESTING
-            ////////////////////////////////////////////////////////////////
-
-            // print people
+            // Create and print people
+            persons = CreatePersons(dp, names, prefs, timestamps, seniority);
             ShowPeople(persons);
-
-            // print test calendar;
-            Calendar defaultCalendar = new Calendar("test");
-            defaultCalendar.ConsoleOut();
 
             // print supposedly working calender #firsttry????
             Calendar testCalendar = dp.SortMostPreferred(persons);
             testCalendar.ConsoleOut();
+
+            // HACK write code to start assigning shifts
 
             ////////////////////////////////////////////////////////////////
             // CLEANUP
@@ -95,38 +93,12 @@ namespace Shift
             XlCleanup(xlApp, xlWorkbook, xlWorksheet, xlRange);
         }
 
-        // checks and prints data range in excel sheet
-        static void CheckDataRange(Excel.Range range)
-        {
-            int rows = range.Rows.Count;
-            int cols = range.Columns.Count;
-            Console.WriteLine("rows: " + rows);
-            Console.WriteLine("cols: " + cols);
-        }
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // Shift Assigning
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        // returns names of all entries based on Persons created
-        static void PrintNamesOfPersons (Person[] persons)
-        {
-            foreach (Person p in persons)
-            {
-                Console.WriteLine(p.GetName());
-            }
-        } 
         
-
-        // TODO General cleanup. Releases Com objects. Takes care of Excel instance staying open after program finishes
-        static void XlCleanup(Excel.Application xlApp, Excel.Workbook xlWorkbook, Excel.Worksheet xlWorksheet, Excel.Range xlRange)
-        {
-            Marshal.ReleaseComObject(xlRange);
-            Marshal.ReleaseComObject(xlWorksheet);
-
-            xlWorkbook.Close();
-            Marshal.ReleaseComObject(xlWorkbook);
-
-            xlApp.Quit();
-            Marshal.ReleaseComObject(xlApp);
-            Console.WriteLine("objects released");
-        }
+        
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Excel Data Processing
@@ -197,8 +169,41 @@ namespace Shift
             }
         }
 
-        
-        
+        // checks and prints data range in excel sheet
+        static void CheckDataRange(Excel.Range range)
+        {
+            int rows = range.Rows.Count;
+            int cols = range.Columns.Count;
+            Console.WriteLine("rows: " + rows);
+            Console.WriteLine("cols: " + cols);
+        }
+
+        // returns names of all entries based on Persons created
+        static void PrintNamesOfPersons(Person[] persons)
+        {
+            foreach (Person p in persons)
+            {
+                Console.WriteLine(p.GetName());
+            }
+        }
+
+
+        // TODO General cleanup. Releases Com objects. Takes care of Excel instance staying open after program finishes
+        static void XlCleanup(Excel.Application xlApp, Excel.Workbook xlWorkbook, Excel.Worksheet xlWorksheet, Excel.Range xlRange)
+        {
+            Marshal.ReleaseComObject(xlRange);
+            Marshal.ReleaseComObject(xlWorksheet);
+
+            xlWorkbook.Close();
+            Marshal.ReleaseComObject(xlWorkbook);
+
+            xlApp.Quit();
+            Marshal.ReleaseComObject(xlApp);
+            Console.WriteLine("objects released");
+        }
+
+
+
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

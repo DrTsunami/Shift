@@ -48,7 +48,8 @@ namespace Shift
             // converts preferences into int array with preferences
             return PrefsToShiftNums(day, time);
         } // end parse
-
+        
+        // Sorts the preferences of everyone into a calendar object and returns it
         public Calendar SortMostPreferred (Person[] persons)
         {
             Calendar prefCal = new Calendar();
@@ -61,8 +62,11 @@ namespace Shift
                 }
             }
 
+            // return calendar with indexes filled with preferences
             return prefCal;
         } // end SortMostPreferred
+
+
 
         // takes a one set of prefs (with days and times in separate arrays with same indexes) and converts to number system
         private int[] PrefsToShiftNums(String[] days, String[] times)
@@ -141,37 +145,37 @@ namespace Shift
                 day = 0;
                 time = shift - 11;
                 arrayNum = day + time;
-            } else if (shift >= 10 && shift < 15)
+            } else if (shift >= 20 && shift < 25)
             {
                 // start of tues. day starts at 4. substact shift by 21 to make 8am 0
                 day = 4;
                 time = shift - 21;
                 arrayNum = day + time;
-            } else if (shift >= 10 && shift < 15)
+            } else if (shift >= 30 && shift < 35)
             {
                 // start of wed. day starts at 0. substact shift by 31 to make 8am 0
                 day = 8;
                 time = shift - 31;
                 arrayNum = day + time;
-            } else if (shift >= 10 && shift < 15)
+            } else if (shift >= 40 && shift < 45)
             {
                 // start of thuf. day starts at 0. substact shift by 41 to make 8am 0
                 day = 12;
                 time = shift - 41;
                 arrayNum = day + time;
-            } else if (shift >= 10 && shift < 15)
+            } else if (shift >= 50 && shift < 55)
             {
                 // start of fri. day starts at 0. substact shift by 51 to make 8am 0
                 day = 16;
                 time = shift - 51;
                 arrayNum = day + time;
-            } else if (shift >= 10 && shift < 15)
+            } else if (shift >= 60 && shift < 65)
             {
                 // start of sat. day starts at 0. substact shift by 61 to make 8am 0
                 day = 20;
                 time = shift - 61;
                 arrayNum = day + time;
-            } else if (shift >= 10 && shift < 15)
+            } else if (shift >= 70 && shift < 75)
             {
                 // start of sun. day starts at 0. substact shift by 71 to make 8am 0
                 day = 24;
