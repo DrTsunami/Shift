@@ -11,19 +11,18 @@ namespace Shift
         // set of characters (delimiters) that will separate into substrings
         char[] commaDelim = {',', ' '};
 
-        // public DateTime[] parse(String prefs)
-        public void parse()
+        public int[] Parse(String prefs)
         {
             // DateTime[] prefArray;
-            String testString = "TUES 4PM-8PM, TUES 8PM-12AM, WEDS 12PM-4PM, WEDS 4PM-8PM, WEDS 8PM-12AM";
+            // String testPrefs = "TUES 4PM-8PM, TUES 8PM-12AM, WEDS 12PM-4PM, WEDS 4PM-8PM, WEDS 8PM-12AM";
         
             // begin parsing
-            String[] splitString = testString.Split(commaDelim, System.StringSplitOptions.RemoveEmptyEntries);
-            int prefCount = (testString.Length / 2);    // day and time count for 2 entries in the 
+            String[] splitString = prefs.Split(commaDelim, System.StringSplitOptions.RemoveEmptyEntries);
+            int prefCount = (splitString.Length / 2);    // day and time count for 2 entries in the 
             String[] day = new String[prefCount];
             String[] time = new String[prefCount];
 
-
+            // for each entry in the split string, sorts into a day and time array 
             for (int i = 0; i < splitString.Length; i++)
             {
                 if (i == 0 || (i % 2) == 0) {
@@ -36,28 +35,22 @@ namespace Shift
                     time[oddArrayNumber] = splitString[i];
                 }
             }
-
-
-            // Print original string
-            System.Console.WriteLine(testString);
-
+            
             // print preferences
+            /*
             for (int i = 0; i < prefCount; i++)
             {
                 System.Console.Write(day[i]);
                 System.Console.WriteLine(" " + time[i]);
             }
-
-            // print them as numbers
-            // TODO START HERE. NEED TO FIX DAY AND TIME TO ACTUALLY REFERENCE SOMETHING. FIX THE FUNCTION
-            prefsToShiftNums(day, time);
+            */
             
+            // converts preferences into int array with preferences
+            return PrefsToShiftNums(day, time);
+        } // end parse
 
-            // return prefArray;
-        }
-
-        
-        int[] prefsToShiftNums(String[] days, String[] times)
+        // takes a one set of prefs (with days and times in separate arrays with same indexes) and converts to number system
+        private int[] PrefsToShiftNums(String[] days, String[] times)
         {
             int prefCount = days.Length;
             int[] prefsAsShiftNums = new int[prefCount];
@@ -92,7 +85,6 @@ namespace Shift
                         shift = 0;
                         break;
                 }
-                System.Console.WriteLine("Day: " + shift);
                 
                 switch (times[i])
                 {
@@ -112,11 +104,13 @@ namespace Shift
                         shift = shift + 0;
                         break;
                 }
-
-                System.Console.WriteLine("Day + Time: " + shift);
-            }
-
+                prefsAsShiftNums[i] = shift;
+                // write pref to the array
+                
+            } // end for loop for conversion of each entry into numbers
+            
+            // return ints
             return prefsAsShiftNums;
-        }
-    }
-}
+        }   // end PrefsToShiftNums
+    } // end DataProcessing
+} // namespace
