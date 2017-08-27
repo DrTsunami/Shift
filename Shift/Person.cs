@@ -8,10 +8,10 @@ namespace Shift
 {
     class Person
     {
-        String name;
-        int[] prefs;
-        DateTime timestamp;
-        int seniority;
+        public String name;
+        public int[] prefs;
+        public DateTime timestamp;
+        public int seniority;
         
         public Person(String name, int[] prefs, DateTime timestamp, int seniority)
         {

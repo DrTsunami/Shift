@@ -80,6 +80,14 @@ namespace Shift
             // print people
             ShowPeople(persons);
 
+            // print test calendar;
+            Calendar defaultCalendar = new Calendar("test");
+            defaultCalendar.ConsoleOut();
+
+            // print supposedly working calender #firsttry????
+            Calendar testCalendar = dp.SortMostPreferred(persons);
+            testCalendar.ConsoleOut();
+
             ////////////////////////////////////////////////////////////////
             // CLEANUP
             ////////////////////////////////////////////////////////////////

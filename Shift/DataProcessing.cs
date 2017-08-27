@@ -49,6 +49,21 @@ namespace Shift
             return PrefsToShiftNums(day, time);
         } // end parse
 
+        public Calendar SortMostPreferred (Person[] persons)
+        {
+            Calendar prefCal = new Calendar();
+            
+            foreach (Person p in persons)
+            { // TODO need to look at numbering system in shift to arry num i think my problem is there
+                foreach (int shift in p.prefs)
+                {
+                    prefCal.shifts[ShiftToArrayNum(shift)]++;
+                }
+            }
+
+            return prefCal;
+        } // end SortMostPreferred
+
         // takes a one set of prefs (with days and times in separate arrays with same indexes) and converts to number system
         private int[] PrefsToShiftNums(String[] days, String[] times)
         {
@@ -111,6 +126,66 @@ namespace Shift
             
             // return ints
             return prefsAsShiftNums;
-        }   // end PrefsToShiftNums
+        } // end PrefsToShiftNums
+
+        // takes shift number we converted to and converts it back to the calendar array compatible form
+        private int ShiftToArrayNum(int shift)
+        {
+            int arrayNum;
+            int day;
+            int time;
+
+            if (shift >= 10 && shift < 15)
+            {
+                // start of monday. day starts at 0. substact shift by 11 to make 8am 0
+                day = 0;
+                time = shift - 11;
+                arrayNum = day + time;
+            } else if (shift >= 10 && shift < 15)
+            {
+                // start of tues. day starts at 4. substact shift by 21 to make 8am 0
+                day = 4;
+                time = shift - 21;
+                arrayNum = day + time;
+            } else if (shift >= 10 && shift < 15)
+            {
+                // start of wed. day starts at 0. substact shift by 31 to make 8am 0
+                day = 8;
+                time = shift - 31;
+                arrayNum = day + time;
+            } else if (shift >= 10 && shift < 15)
+            {
+                // start of thuf. day starts at 0. substact shift by 41 to make 8am 0
+                day = 12;
+                time = shift - 41;
+                arrayNum = day + time;
+            } else if (shift >= 10 && shift < 15)
+            {
+                // start of fri. day starts at 0. substact shift by 51 to make 8am 0
+                day = 16;
+                time = shift - 51;
+                arrayNum = day + time;
+            } else if (shift >= 10 && shift < 15)
+            {
+                // start of sat. day starts at 0. substact shift by 61 to make 8am 0
+                day = 20;
+                time = shift - 61;
+                arrayNum = day + time;
+            } else if (shift >= 10 && shift < 15)
+            {
+                // start of sun. day starts at 0. substact shift by 71 to make 8am 0
+                day = 24;
+                time = shift - 71;
+                arrayNum = day + time;
+            } else
+            {
+                arrayNum = -1;
+                Console.WriteLine("ERROR: invalid shift num");
+            }
+
+            return arrayNum;
+        } // end ShiftToArrayNum
+
+
     } // end DataProcessing
 } // namespace
