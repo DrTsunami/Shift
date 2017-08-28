@@ -85,6 +85,7 @@ namespace Shift
             testCalendar.ConsoleOut();
 
             // HACK write code to start assigning shifts
+            AssignShifts(testCalendar);
 
             ////////////////////////////////////////////////////////////////
             // CLEANUP
@@ -97,7 +98,28 @@ namespace Shift
         // Shift Assigning
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        
+        // TODO make this return the calendar with shfits assigned
+        static void AssignShifts(Calendar prefCal)
+        {
+
+            for (int i = 0; i < 28; i++)
+            {
+                int leastPreferred = 99;
+                int index = 0;
+                for (int pref = 0; pref < 28; pref++)
+                {
+                    if (prefCal.shifts[pref] < leastPreferred && prefCal.shifts[pref] >= 0)
+                    {
+                        leastPreferred = prefCal.shifts[pref];
+                        index = pref;
+                    }
+                }
+                prefCal.shifts[index] = -1;
+                // DEBUG
+                Console.WriteLine("Least Preferred Index: " + index + "\t" + "Least Preferred Count" + leastPreferred);
+                prefCal.ConsoleOut();
+            }
+        }
         
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
