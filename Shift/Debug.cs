@@ -11,7 +11,12 @@ namespace Shift
     {
         public Debug ()
         {
-            // currently empty
+            //////
+            //TASKS
+            //////
+
+            // make a check for how many entries there are. make sure there are 28
+            //      stemming from this, you need to make an option for a blank entry at some point
         }
     }
 }
