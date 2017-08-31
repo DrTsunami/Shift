@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,7 +44,7 @@ namespace Shift
                 }
             }
 
-            // TODO figure out the path problem, bitch. Not really because you need to allow the program to pick a file.
+            // TODO allow the program to pick a file.
             // TODO make a verification process (check a cell for a certain value) to check if the file is a valid one.
             Excel.Application xlApp = new Excel.Application();
             Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(@"C:\Users\Ryan\Documents\GitHub\Shift\Shift\sheets\Responses.xlsx");
@@ -67,7 +68,7 @@ namespace Shift
 
             Person[] persons = new Person[28];
 
-            DataProcessing dp = new DataProcessing();
+            DataProcessor dp = new DataProcessor();
 
             ////////////////////////////////////////////////////////////////
             // METHODS
@@ -85,7 +86,7 @@ namespace Shift
             testCalendar.ConsoleOut();
 
             // HACK write code to start assigning shifts
-            AssignShifts(testCalendar);
+            AssignShifts(testCalendar, persons, dp);
 
             ////////////////////////////////////////////////////////////////
             // CLEANUP
@@ -99,26 +100,99 @@ namespace Shift
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // TODO make this return the calendar with shfits assigned
-        static void AssignShifts(Calendar prefCal)
+        static void AssignShifts(Calendar prefCal, Person[] persons, DataProcessor dp)
         {
-
+            // Cycles through 28 times (for each shift) searching in the order of the least preferred preferences first
+            // i is the number of shifts this loop as completed
+            // shiftIndex, in the scope of the smaller loop, is the index of the shfit number
             for (int i = 0; i < 28; i++)
             {
                 int leastPreferred = 99;
-                int index = 0;
+                int shiftIndex = 0;     
                 for (int pref = 0; pref < 28; pref++)
                 {
                     if (prefCal.shifts[pref] < leastPreferred && prefCal.shifts[pref] >= 0)
                     {
                         leastPreferred = prefCal.shifts[pref];
-                        index = pref;
+                        shiftIndex = pref;
                     }
                 }
-                prefCal.shifts[index] = -1;
+
+                // Begin process of assigning shift
+                // list of people who prefer the current shift being examined
+                List<int> peoplePref = new List<int>();
+                peoplePref = GetPeoplePref(persons, shiftIndex, dp);
+                int personAssignedIndex;
+
+                // Goes through each person in the array list and compares to the next until the final person is found
+                // the minus 1 is to account for the fact that you only go up to the second to last to compare with last person
+                for (int j = 0; j < (peoplePref.Count - 1); j++)
+                {
+                    personAssignedIndex = ComparePeople(persons, peoplePref[j], peoplePref[j + 1]);
+                }
+
+                // HACK do work with the person assigned after
+                
+
+
                 // DEBUG
-                Console.WriteLine("Least Preferred Index: " + index + "\t" + "Least Preferred Count" + leastPreferred);
+                prefCal.shifts[shiftIndex] = -1;
+                Console.WriteLine("Least Preferred Index: " + shiftIndex + "\t" + "Least Preferred Count" + leastPreferred);
                 prefCal.ConsoleOut();
             }
+        }
+
+        // Compares two people by means of their indexes in persons array. Returns index of prioritized person
+        static int ComparePeople(Person[] persons, int index1, int index2)
+        {
+            Person p1 = persons[index1];
+            Person p2 = persons[index2];
+            int priority = -1;
+
+            // check seniority first
+            if (p1.seniority > p2.seniority)
+            {
+                priority = index1;
+            } else if (p2.seniority > p1.seniority)
+            {
+                priority = index2;
+            } else // if p1 and p2 seniorities equal
+            {
+                // if seniority ends in tie, then move on to timestamp
+                int compareTime = DateTime.Compare(p1.timestamp, p2.timestamp);
+                if (compareTime < 0)
+                {
+                    priority = index1;
+                } else if (compareTime > 0)
+                {
+                    priority = index2;
+                } else // if submission time equal 
+                {
+                    priority = index1;
+                    Console.WriteLine("ERROR: Or sort of.... somehow the submission time exactly lined up.");
+                }
+            }
+
+            return priority;
+        }
+
+        static List<int> GetPeoplePref (Person[] persons, int shiftNum, DataProcessor dp)
+        {
+            List<int> peoplePref = new List<int>();
+
+            // for every person in people, run through every preference and if the preference matches the shiftNum, add to arraylist and return
+            for (int i = 0; i < persons.Length; i++)
+            {
+                foreach (int pref in persons[i].prefs)
+                {
+                    if (dp.ShiftToArrayNum(pref) == shiftNum)
+                    {
+                        peoplePref.Add(i);
+                    }
+                }
+            }
+
+            return peoplePref;
         }
         
 
@@ -169,7 +243,7 @@ namespace Shift
             return data;
         }
 
-        static Person[] CreatePersons(DataProcessing dp, String[] names, String[] stringPrefs, DateTime[] timestamps, int[] seniority)
+        static Person[] CreatePersons(DataProcessor dp, String[] names, String[] stringPrefs, DateTime[] timestamps, int[] seniority)
         {
             Person[] persons = new Person[28];
 

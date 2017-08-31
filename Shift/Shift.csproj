@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calendar.cs" />
-    <Compile Include="DataProcessing.cs" />
+    <Compile Include="DataProcessor.cs" />
     <Compile Include="Debug.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

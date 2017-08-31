@@ -10,6 +10,7 @@ namespace Shift
     {
         String name;
         public int[] shifts;
+        private Person[] assignedPersons;
 
         public Calendar(String name = "default")
         {
@@ -69,6 +70,5 @@ namespace Shift
             }
             System.Console.WriteLine();
         }
-
     }
 }

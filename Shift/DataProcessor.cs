@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Shift
 {
-    class DataProcessing
+    class DataProcessor
     {
         // set of characters (delimiters) that will separate into substrings
         char[] commaDelim = {',', ' '};
@@ -69,7 +69,7 @@ namespace Shift
 
 
         // takes a one set of prefs (with days and times in separate arrays with same indexes) and converts to number system
-        private int[] PrefsToShiftNums(String[] days, String[] times)
+        public int[] PrefsToShiftNums(String[] days, String[] times)
         {
             int prefCount = days.Length;
             int[] prefsAsShiftNums = new int[prefCount];
@@ -133,7 +133,7 @@ namespace Shift
         } // end PrefsToShiftNums
 
         // takes shift number we converted to and converts it back to the calendar array compatible form
-        private int ShiftToArrayNum(int shift)
+        public int ShiftToArrayNum(int shift)
         {
             int arrayNum;
             int day;
