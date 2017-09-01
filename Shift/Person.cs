@@ -12,7 +12,14 @@ namespace Shift
         public int[] prefs;
         public DateTime timestamp;
         public int seniority;
-        
+
+        // backup vars
+        private int[] prefsBak;
+        private DateTime timestampBak;
+        private int seniorityBak;
+        public bool destroyed = false;
+
+
         public Person(String name, int[] prefs, DateTime timestamp, int seniority)
         {
             this.name = name;
@@ -42,6 +49,38 @@ namespace Shift
             System.Console.WriteLine("Timestamp: " + timestamp);
             System.Console.WriteLine("Seniority: " + seniority);
             System.Console.WriteLine();
+        }
+
+        public void RandomizeSeniority(Random r)
+        {
+            seniority = r.Next(6);
+        }
+
+        public void Destroy()
+        {
+            // make backup
+            prefsBak = prefs;
+            timestampBak = timestamp;
+            seniorityBak = seniority;
+
+            // Destroy current values
+            prefs = new int[0];
+            timestamp = new DateTime();
+            seniority = 0;
+            destroyed = true;
+        }
+
+        public void Restore()
+        {
+            if (destroyed)
+            {
+                prefs = prefsBak;
+                timestamp = timestampBak;
+                seniority = seniorityBak;
+            } else
+            {
+                Console.WriteLine("ERROR: You haven't destroyed this person yet!!");
+            }
         }
     }
 }

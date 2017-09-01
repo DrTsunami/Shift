@@ -10,8 +10,6 @@ namespace Shift
     {
         String name;
         public int[] shifts;
-        private Person[] assignedPersons;
-
         public Calendar(String name = "default")
         {
             this.name = name;
