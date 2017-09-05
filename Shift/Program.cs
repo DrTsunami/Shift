@@ -156,7 +156,7 @@ namespace Shift
                     // the minus 1 is to account for the fact that you only go up to the second to last to compare with last person
                     // if then loop to account for if only one person available
                     if (peoplePref.Count == 1)
-                    {
+                    { 
                         personAssignedIndex = peoplePref[0];
                     } else // contine to compare
                     {
