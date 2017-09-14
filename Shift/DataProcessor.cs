@@ -4,10 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Shift
 {
     class DataProcessor
     {
+
+        public DataProcessor() { }
+
         // set of characters (delimiters) that will separate into substrings
         char[] commaDelim = {',', ' '};
 

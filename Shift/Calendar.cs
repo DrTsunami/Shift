@@ -10,10 +10,12 @@ namespace Shift
     {
         String name;
         public int[] shifts;
+        int shiftCount = 28;
+
         public Calendar(String name = "default")
         {
             this.name = name;
-            shifts = new int[28];
+            shifts = new int[shiftCount];
 
             // for the default case
             if (name.Equals("test"))

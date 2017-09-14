@@ -12,12 +12,14 @@ namespace Shift
         public int[] prefs;
         public DateTime timestamp;
         public int seniority;
+        public bool assigned = false;
+        public int shiftAssigned = -1;
 
         // backup vars
-        private int[] prefsBak;
-        private DateTime timestampBak;
-        private int seniorityBak;
-        public bool destroyed = false;
+        public int[] prefsBak;
+        public DateTime timestampBak;
+        public int seniorityBak;
+
 
 
         public Person(String name, int[] prefs, DateTime timestamp, int seniority)
@@ -51,9 +53,20 @@ namespace Shift
             System.Console.WriteLine();
         }
 
+        // DEBUG temporary system to randomize the seniority. Will be replaced with real seniority
         public void RandomizeSeniority(Random r)
         {
             seniority = r.Next(6);
+        }
+
+        public int GetShift()
+        {
+            return shiftAssigned;
+        }
+
+        public void Assign(int shiftIndex)
+        {
+            shiftAssigned = shiftIndex;
         }
 
         public void Destroy()
@@ -67,12 +80,12 @@ namespace Shift
             prefs = new int[0];
             timestamp = new DateTime();
             seniority = 0;
-            destroyed = true;
+            assigned = true;
         }
 
         public void Restore()
         {
-            if (destroyed)
+            if (assigned)
             {
                 prefs = prefsBak;
                 timestamp = timestampBak;
