@@ -1,4 +1,10 @@
-﻿using System;
+﻿/**
+ * SCHEDULER
+ * 
+ * Object that holds all the methods to scheduling, assigning shifts and conflict resolution
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +16,7 @@ namespace Shift
 {
     class Scheduler
     {
+        // local vars to be used
         DataProcessor dp = new DataProcessor();
 
         /**
@@ -18,10 +25,17 @@ namespace Shift
         public Scheduler() { }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Shift Assigning
+        // Shift Assigning - Section where shifts are distributed to each person
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // TODO make this return the calendar with shfits assigned
+        /**
+         * Assign Shifts
+         * Entry point for shift assignment. The queue list gets created here. Cycles 28 times (for each shift) searching 
+         * in the order of the least preferred preferences first. For each shift cycle, iterates through prefCal to find
+         * which shift is currently least desired. If person is available, prioritizes and assigns. If no one available
+         * Conflict resolution is called to handle rearrangements.
+         */
         public void AssignShifts(Calendar prefCal, Calendar shiftCal, Person[] persons, List<int> unassigned)
         {
             /////////////////////////////////////////////
@@ -48,7 +62,7 @@ namespace Shift
                     }
                 }
 
-                // Begin process of assigning shift
+                // BEGIN process of assigning shift
                 // list of people who prefer the current shift being examined
 
                 List<int> peoplePref = new List<int>();
@@ -101,8 +115,10 @@ namespace Shift
          * Cleans the traces of the person just assigned. Foreach pref of that person,
          * we convert them into prefnumbers, and subtract 1 from the preference counter
          * calendar.
+         * 
+         * @param p Person to clean
+         * @param prefCal preference counter Calendar
          */
-
         public void CleanPerson (Person p, Calendar prefCal)
         {
             // remove 1 from each of preferences
@@ -133,8 +149,13 @@ namespace Shift
         }
 
         /**
-         * Prioritizes the list of PeoplePref and 
+         * Return Index of Person With Most Priority
+         * Compares each person in peoplePref by using the compare people method between the current person 
+         * and the next in the List. 
          * 
+         * @param peoplePref List of anyone who is available and prefers a certain shift
+         * @param persons list of Persons in the program
+         * @return most prioritized person 
          */
         private int GetTopPriorityPerson(List<int> peoplePref, Person[] persons)
         {
@@ -160,6 +181,16 @@ namespace Shift
         }
 
         // Compares two people by means of their indexes in persons array. Returns index of prioritized person
+        /**
+         * Returns person with higher priority.
+         * Checks the priority of each person based on the following, ordered criteria
+         * 1) seniority
+         * 2) timestamp
+         * 
+         * @param persons list of Person
+         * @param index1: index of first person
+         * @param index2: index of second person (usually the i+1)
+         */
         public int ComparePeople(Person[] persons, int index1, int index2)
         {
             Person p1 = persons[index1];
@@ -197,12 +228,18 @@ namespace Shift
             return priority;
         }
 
-
+        /**
+         * Returns List of people who prefer a given shift.
+         * Iterates through each person and if their pref matches with shiftNum, adds the index
+         * of the person to the List returned.
+         * 
+         * @param persons list of Person
+         * @param shiftNum index of the shift you want to check preferences for
+         */
         public List<int> GetPeoplePref(Person[] persons, int shiftNum)
         {
             List<int> peoplePref = new List<int>();
-
-            // for every person in people, run through every preference and if the preference matches the shiftNum, add to arraylist and return
+            
             for (int i = 0; i < persons.Length; i++)
             {
                 foreach (int pref in persons[i].prefs)
@@ -232,6 +269,11 @@ namespace Shift
          * problem shift are called COVERERS, those who slide to fill the recent vacancy
          * are called SLIDERS
          * 
+         * @param shiftIndex index of the unassigned and unpreferred shift
+         * @param persons Person list
+         * @param queue List of shifts which have been analyzed previously
+         * @param shiftCal Calendar for assigned shifts
+         * @param prefCal Calendar for how many people prefer each shift
          * @return void
          */
         public void ResolveConflict(int shiftIndex, Person[] persons, List<int> queue, Calendar shiftCal, Calendar prefCal)
@@ -279,14 +321,12 @@ namespace Shift
         }
 
         /**
-         * Makes Assigned List
-         * Makes a list of all assigned people to this point. Iterates through the provided persons array 
-         * and checks bool assigned to see if assigned. If assigned, then adds to a List and returns that
-         * list
+         * Return List of all currently assigned people
+         * by iterating through the provided persons array and checking to see if assigned. 
+         * If assigned, then adds to the list that is returned
          * 
-         * @return list of all assigned people
+         * @param persons list of Person
          */
-
         private List<int> MakeAssignedList(Person[] persons)
         {
             List<int> assigned = new List<int>();    // list of the indeces of people who are assigned
@@ -304,10 +344,13 @@ namespace Shift
         }
 
         /**
-         * Checks if Person can fill
-         * Foreach pref in the person currently occupying thisShift currently being looked at in the queue, 
-         * we check to see if the person can cover.
+         * Returns true if Person can fill
+         * by checking Foreach pref in the person currently occupying thisShift currently being looked at in the queue
          * 
+         * @param shiftToFillIndex index for the shift that is to be FILLED/COVERED
+         * @param qIndex index for the current i in queue, not yet converted to a shiftNumber
+         * @param q queue list
+         * @params shiftCal, persons
          * @return true if person can cover, false otherwise
          */
         private bool PersonCanFill(int shiftToFillIndex, int qIndex, List<int> q, Calendar shiftCal, Person[] persons)
@@ -345,8 +388,15 @@ namespace Shift
        
 
         /**
-         * Covers the Empty spot, Slides up an available person
+         * Assigns people after verifying a Cover and a Slider
+         * Applies effects to calendars and people
          * 
+         * @param coverIndex index for the problem shift that is to be covered
+         * @param covererIndex index for the person that will be covering
+         * @param sliders List of possible sliders who can fill the recently vacated spot
+         * @param slideToIndex index of the shift that will need to be filled when vacated
+         * @params shiftCal, persons, prefCal
+         * @return void
          */
         private void CoverAndSlide(int coverIndex, int covererIndex, List<int> sliders, 
             int slideToIndex, Calendar shiftCal, Person[] persons, Calendar prefCal)
@@ -371,11 +421,12 @@ namespace Shift
         }
 
         /**
-        * Checks and Gets if people can Slide up
-        * Calls the getPeoplePref method to cycle through all available people. If there
-        * is someone then 
+        * Returns any possible sliders
+        * by calling the getPeoplePref method to cycle through all available people. If there
+        * is someone then we add that person to the list to return
         * 
-        * @return List of people who can slide up
+        * @param thisShiftIndex index for shift we need to slide into
+        * @param persons 
         */
         private List<int> GetPossibleSliders(int thisShiftIndex, Person[] persons)
         {
@@ -387,6 +438,14 @@ namespace Shift
         // Excel Data Processing
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        /**
+         * Returns string array of any specified col with Strings as inputs
+         * NOTE: rowStart indicates when the data begins
+         * 
+         * @param xlWorksheet Excel Worksheet
+         * @param col integer referencing the col we want to grab data from
+         * @param personCount integer representing the amount of people/entries 
+         */
         public String[] GetStringData(Excel.Worksheet xlWorksheet, int col, int personCount)
         {
             int rowStart = 2;
@@ -402,6 +461,14 @@ namespace Shift
             return data;
         }
 
+        /**
+         * Returns int array of any specified col with int as inputs
+         * NOTE: rowStart indicates when the data begins
+         * 
+         * @param xlWorksheet Excel Worksheet
+         * @param col integer referencing the col we want to grab data from
+         * @param personCount integer representing the amount of people/entries 
+         */
         public int[] GetIntData(Excel.Worksheet xlWorksheet, int col, int personCount)
         {
             int rowStart = 2;
@@ -416,6 +483,14 @@ namespace Shift
             return data;
         }
 
+        /**
+         * Returns DateTime array of any specified col with DateTime as inputs
+         * NOTE: rowStart indicates when the data begins
+         * 
+         * @param xlWorksheet Excel Worksheet
+         * @param col integer referencing the col we want to grab data from
+         * @param personCount integer representing the amount of people/entries 
+         */
         public DateTime[] GetTimestampData(Excel.Worksheet xlWorksheet, int col, int personCount)
         {
             int rowStart = 2;
@@ -430,6 +505,15 @@ namespace Shift
             return data;
         }
 
+        /**
+         * Returns Person array containing the people we work with throughout the program
+         * Instantiates and populates the people objects here with the Excel derived data.
+         * 
+         * @param names string array of all names for people
+         * @param stringPrefs string array of the prefs for each person
+         * @param timeStamps Datetime array of timestamps 
+         * @param seniority int array of seniority
+         */
         public Person[] CreatePersons(String[] names, String[] stringPrefs, DateTime[] timestamps, int[] seniority)
         {
             Person[] persons = new Person[names.Length];
@@ -444,6 +528,11 @@ namespace Shift
             return persons;
         }
 
+        /**
+         * Outputs to console every person and their values
+         * 
+         * @param persons
+         */
         public void ShowPeople(Person[] persons)
         {
             foreach (Person p in persons)
@@ -452,7 +541,11 @@ namespace Shift
             }
         }
 
-        // checks and prints data range in excel sheet
+        /**
+         * Outputs the row/col ranges of data in Excel sheet
+         * 
+         * @param range Excel range of data
+         */
         public void CheckDataRange(Excel.Range range)
         {
             int rows = range.Rows.Count;
@@ -461,7 +554,11 @@ namespace Shift
             Console.WriteLine("cols: " + cols);
         }
 
-        // returns names of all entries based on Persons created
+        /**
+         * Outputs the names of all people
+         * 
+         * @param persons
+         */
         public void PrintNamesOfPersons(Person[] persons)
         {
             foreach (Person p in persons)

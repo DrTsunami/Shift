@@ -16,6 +16,8 @@ using System.Runtime.InteropServices;
  * 1) handle coord shifts or ghost shifts in the schedule.
  * 
  * 2) Need to handle user entry to lock in certain positions in schedule
+ * 
+ * 3) move to WPF
  */
 
 
