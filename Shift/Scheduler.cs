@@ -10,6 +10,8 @@ namespace Shift
 {
     class Scheduler
     {
+        DataProcessor dp = new DataProcessor();
+
         /**
          * Init
          */
@@ -20,7 +22,7 @@ namespace Shift
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // TODO make this return the calendar with shfits assigned
-        public void AssignShifts(Calendar prefCal, Calendar shiftCal, Person[] persons, DataProcessor dp, List<int> unassigned)
+        public void AssignShifts(Calendar prefCal, Calendar shiftCal, Person[] persons, List<int> unassigned)
         {
             /////////////////////////////////////////////
             // Vars
@@ -50,35 +52,19 @@ namespace Shift
                 // list of people who prefer the current shift being examined
 
                 List<int> peoplePref = new List<int>();
-                peoplePref = GetPeoplePref(persons, shiftIndex, dp);
+                peoplePref = GetPeoplePref(persons, shiftIndex);
 
                 // allow for conflicts
                 if (peoplePref.Count > 0)
                 {
-                    int personAssignedIndex = -1;
-
-                    // Goes through each person in the array list and compares to the next until the final person is found
-                    // the minus 1 is to account for the fact that you only go up to the second to last to compare with last person
-                    // if then loop to account for if only one person available
-                    if (peoplePref.Count == 1)
-                    {
-                        personAssignedIndex = peoplePref[0];
-                    }
-                    else // continue to compare
-                    {
-                        for (int j = 0; j < (peoplePref.Count - 1); j++)
-                        {
-                            personAssignedIndex = ComparePeople(persons, peoplePref[j], peoplePref[j + 1]);
-                            Console.WriteLine("personIndex: " + personAssignedIndex);
-                        }
-                    }
+                    int personAssignedIndex = GetTopPriorityPerson(peoplePref, persons);
 
                     // assign person. Set in calendar and update person with shift
                     shiftCal.shifts[shiftIndex] = personAssignedIndex;
                     persons[personAssignedIndex].Assign(shiftIndex);
 
                     // remove 1 from each of preferences and destroy person
-                    CleanPerson(persons[personAssignedIndex], prefCal, dp);
+                    CleanPerson(persons[personAssignedIndex], prefCal);
 
                     // set the shift as taken
                     prefCal.shifts[shiftIndex] = -1;
@@ -89,7 +75,7 @@ namespace Shift
 
                     // DEBUG
                     // prefCal.shifts[shiftIndex] = -2;
-                    ResolveConflict(shiftIndex, persons, queue, prefCal);
+                    ResolveConflict(shiftIndex, persons, queue, shiftCal, prefCal);
 
                 }
 
@@ -117,7 +103,7 @@ namespace Shift
          * calendar.
          */
 
-        public void CleanPerson (Person p, Calendar prefCal, DataProcessor dp)
+        public void CleanPerson (Person p, Calendar prefCal)
         {
             // remove 1 from each of preferences
             foreach (int pref in p.prefs)
@@ -144,6 +130,33 @@ namespace Shift
              * NOTE: potential problem... forgot what it was
              */
              p.Destroy();
+        }
+
+        /**
+         * Prioritizes the list of PeoplePref and 
+         * 
+         */
+        private int GetTopPriorityPerson(List<int> peoplePref, Person[] persons)
+        {
+            int personAssignedIndex = -1;
+
+            // Goes through each person in the array list and compares to the next until the final person is found
+            // the minus 1 is to account for the fact that you only go up to the second to last to compare with last person
+            // if then loop to account for if only one person available
+            if (peoplePref.Count == 1)
+            {
+                personAssignedIndex = peoplePref[0];
+            }
+            else // continue to compare
+            {
+                for (int j = 0; j < (peoplePref.Count - 1); j++)
+                {
+                    personAssignedIndex = ComparePeople(persons, peoplePref[j], peoplePref[j + 1]);
+                    Console.WriteLine("personIndex: " + personAssignedIndex);
+                }
+            }
+
+            return personAssignedIndex;
         }
 
         // Compares two people by means of their indexes in persons array. Returns index of prioritized person
@@ -185,7 +198,7 @@ namespace Shift
         }
 
 
-        public List<int> GetPeoplePref(Person[] persons, int shiftNum, DataProcessor dp)
+        public List<int> GetPeoplePref(Person[] persons, int shiftNum)
         {
             List<int> peoplePref = new List<int>();
 
@@ -210,9 +223,18 @@ namespace Shift
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /**
+         * Resolves Conflict 
+         * the main entry point for resolving conflicts if shift has no available people.
+         * Takes in the shiftindex for the empty shift, the persons array, the queue list,
+         * and the shiftcalendar. Makes list of assignedpeople, if there are previously
+         * assigned people, starts from the end of the queue and goes backwards to try to 
+         * cover and slide up the next person in the vacated spot. Peopel who move to fill the
+         * problem shift are called COVERERS, those who slide to fill the recent vacancy
+         * are called SLIDERS
          * 
+         * @return void
          */
-        public void ResolveConflict(int shiftIndex, Person[] persons, List<int> queue, Calendar shiftCal)
+        public void ResolveConflict(int shiftIndex, Person[] persons, List<int> queue, Calendar shiftCal, Calendar prefCal)
         {
             List<int> assignedPersons = MakeAssignedList(persons);
 
@@ -221,20 +243,37 @@ namespace Shift
                 // Once list is created that isn't empty, need to go backwards through it
                 for (int i = queue.Count - 1; i > 0; i--)
                 {
-                    if (TryPersonFill(shiftIndex, i, shiftCal, persons) == true)
+                    // quick variables
+                    int thisShift = queue[i];
+                    int currentPersonIndex = shiftCal.shifts[thisShift];
+
+                    if (PersonCanFill(shiftIndex, i, queue, shiftCal, persons))
                     {
-                        // if person is found to be able to cover, move person
+                        List<int> sliders = GetPossibleSliders(thisShift, persons);
 
-                        // HACK check that i is actually passing what we want. we need queue to reference
-                            // the index of the shift at hand
+                        if (sliders.Count > 0)
+                        {
+                            CoverAndSlide(shiftIndex, currentPersonIndex, sliders, thisShift, shiftCal, persons, prefCal);
+                            break; // end loop
+                        } else
+                        {
+                            prefCal.shifts[shiftIndex] = -2;
+                            shiftCal.shifts[shiftIndex] = -1;
 
-                        // HACK work on the cover and slide up function which works with one person
-
-                        // UNDONE CoverAndSlideUp(shiftIndex, shiftCal.shifts.[i], ) 
+                        }
+                    } else
+                    {
+                        // if no fill found
+                        prefCal.shifts[shiftIndex] = -2;
+                        shiftCal.shifts[shiftIndex] = -1;
                     }
 
                     // else move to next queue number
                 }
+            } else
+            {
+                prefCal.shifts[shiftIndex] = -2;
+                shiftCal.shifts[shiftIndex] = -1;
             }
 
         }
@@ -265,39 +304,83 @@ namespace Shift
         }
 
         /**
-         * Try to find a fill 
-         * Attemps to fill a vacant shift by taking in the shiftToFillIndex, the current queue index.
+         * Checks if Person can fill
+         * Foreach pref in the person currently occupying thisShift currently being looked at in the queue, 
+         * we check to see if the person can cover.
          * 
+         * @return true if person can cover, false otherwise
          */
-        private bool TryPersonFill(int shiftToFillIndex, int queueIndex, Calendar shiftCal, Person[] persons)
+        private bool PersonCanFill(int shiftToFillIndex, int qIndex, List<int> q, Calendar shiftCal, Person[] persons)
         {
             // check the person assigned at the current queue index
-            int potentialFill = shiftCal.shifts[queueIndex];
+            /*
+             * HACK - fix null pointer
+             *  The problem here is that if a shift hasn't been assigned, it is 0, and basically it still uses that 0 value,
+             *  so it is incorrectly trying to access person 0 right here. So to change it you can either
+             *  1) check to make sure this shift on prefCal isn't -2 which means it can't be assigned 
+             *  2) or make sure that when you can't assign a shift, instead of leaving it as 0 on shiftCal, you could change it 
+             *     on shiftCal to something like -1 and check for that here. 
+             */
+            int thisShift = q[qIndex];
+            int potentialFillIndex = shiftCal.shifts[thisShift];
             bool canCover = false;
 
-            foreach(int pref in persons[potentialFill].prefsBak)
+
+            if (shiftCal.shifts[thisShift] != -1)
             {
-                if (pref == shiftToFillIndex)   // if potentialFill had preferred shiftToFill
+                foreach (int pref in persons[potentialFillIndex].prefsBak)
                 {
-                    canCover = true;
+                    int convertedPref = dp.ShiftToArrayNum(pref);
+                    if (convertedPref == shiftToFillIndex)   // if potentialFill had preferred shiftToFill
+                    {
+                        canCover = true;
+                        break;
+                    }
                 }
             }
 
             return canCover;
         }
 
+       
+
         /**
          * Covers the Empty spot, Slides up an available person
          * 
          */
-        private void CoverAndSlideUp(int coverIndex, int covererIndex, int slideIndex, Calendar shiftCal, Person[] persons)
+        private void CoverAndSlide(int coverIndex, int covererIndex, List<int> sliders, 
+            int slideToIndex, Calendar shiftCal, Person[] persons, Calendar prefCal)
         {
             // move coverer to the new shift
             shiftCal.shifts[coverIndex] = covererIndex;
             persons[covererIndex].Assign(coverIndex);
 
-            // assign previous shift. Need to perform the same checks as before.
+            // assign previous shift. Need to perform the same checks as before. Verify who is at top of priority
+            int sliderIndex = GetTopPriorityPerson(sliders, persons);
+            shiftCal.shifts[slideToIndex] = sliderIndex;
+            persons[sliderIndex].Assign(slideToIndex);
 
+            // clean newly assigned person
+            CleanPerson(persons[sliderIndex], prefCal);
+
+            // set the shift as taken
+            prefCal.shifts[slideToIndex] = -1;
+
+            // HACK combine previous checks, namely perosoncanslideup to help with the exchange here
+
+        }
+
+        /**
+        * Checks and Gets if people can Slide up
+        * Calls the getPeoplePref method to cycle through all available people. If there
+        * is someone then 
+        * 
+        * @return List of people who can slide up
+        */
+        private List<int> GetPossibleSliders(int thisShiftIndex, Person[] persons)
+        {
+            List<int> slideable = GetPeoplePref(persons, thisShiftIndex);
+            return slideable;
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -347,7 +430,7 @@ namespace Shift
             return data;
         }
 
-        public Person[] CreatePersons(DataProcessor dp, String[] names, String[] stringPrefs, DateTime[] timestamps, int[] seniority)
+        public Person[] CreatePersons(String[] names, String[] stringPrefs, DateTime[] timestamps, int[] seniority)
         {
             Person[] persons = new Person[names.Length];
 

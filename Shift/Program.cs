@@ -89,7 +89,7 @@ namespace Shift
             s.CheckDataRange(xlRange);
 
             // Create and print people
-            persons = s.CreatePersons(dp, names, prefs, timestamps, seniority);
+            persons = s.CreatePersons(names, prefs, timestamps, seniority);
             // DEBUG test results using random seniorities
             Random r = new Random();
             foreach(Person p in persons)
@@ -106,7 +106,7 @@ namespace Shift
             // Initialize vars to start assigning shifts
             Calendar shiftCalendar = new Calendar();
             List<int> unassigned = new List<int>();
-            s.AssignShifts(testCalendar, shiftCalendar, persons, dp, unassigned);
+            s.AssignShifts(testCalendar, shiftCalendar, persons, unassigned);
 
             // Print final data
             Console.WriteLine("----------------------------------------");
