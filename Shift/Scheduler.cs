@@ -434,6 +434,15 @@ namespace Shift
             return slideable;
         }
 
+        /**
+         * Attempt to swap three people 
+         */
+        private void AttemptThreeSwap(int shiftIndex, Person[] persons, List<int> queue, Calendar shiftCal, Calendar prefCal)
+        {
+            
+        }
+
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Excel Data Processing
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
