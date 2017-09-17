@@ -439,7 +439,15 @@ namespace Shift
          */
         private void AttemptThreeSwap(int shiftIndex, Person[] persons, List<int> queue, Calendar shiftCal, Calendar prefCal)
         {
-            
+            List<int> assignedPersons = MakeAssignedList(persons);
+
+            if (assignedPersons.Count > 2)
+            {
+
+            } else
+            {
+                Console.WriteLine("Not enough people");
+            }
         }
 
 
