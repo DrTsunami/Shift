@@ -12,8 +12,10 @@ func ThreePersonShift ( [everythingFromTheORiginalConflictResolver] )
 
     if (assignedPersons.count > 2) // the minimum to do a 3 person swap
     {
-        /*
+        // list all eligible
+        List eligible = GetEligibleSwitches(assignedPersons, problemShiftIndex, persons)
 
+        /*
         take first person in the queue who is eligible and assign that person to 
         the shift. 
 
@@ -23,6 +25,16 @@ func ThreePersonShift ( [everythingFromTheORiginalConflictResolver] )
         enough shifts to do that, you need to try and move someone else first
 
         */
+        // take first person in queue eligible
+        for (int i = (queue.count - 1); i > 0; i--) 
+        {
+            int q = queue[i]
+            int onShift = shiftCal.shifts[q]
+
+            foreach (// person in queue, if matches with someone on eligibe list, we proceed)
+        }
+
+
     }
 }
 

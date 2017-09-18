@@ -74,8 +74,7 @@ namespace Shift
                     int personAssignedIndex = GetTopPriorityPerson(peoplePref, persons);
 
                     // assign person. Set in calendar and update person with shift
-                    shiftCal.shifts[shiftIndex] = personAssignedIndex;
-                    persons[personAssignedIndex].Assign(shiftIndex);
+                    AssignPerson(personAssignedIndex, shiftIndex, persons, shiftCal);
 
                     // remove 1 from each of preferences and destroy person
                     CleanPerson(persons[personAssignedIndex], prefCal);
@@ -89,7 +88,15 @@ namespace Shift
 
                     // DEBUG
                     // prefCal.shifts[shiftIndex] = -2;
-                    ResolveConflict(shiftIndex, persons, queue, shiftCal, prefCal);
+
+                    bool conflictResolutionSuccess = false;
+
+                    TrySingleSwap(shiftIndex, persons, queue, shiftCal, prefCal, conflictResolutionSuccess);
+
+                    if (!conflictResolutionSuccess)
+                    {
+                        TryTripleSwap(shiftIndex, persons, queue, shiftCal, prefCal);
+                    }
 
                 }
 
@@ -109,6 +116,20 @@ namespace Shift
             }
 
         } // end AssignShifts
+
+        /**
+         * Assign a person to a shift in a calendar and write the shift assigned to the person
+         * 
+         * @param personIndex integer index of the person in the persons array
+         * @param shiftIndex integer index of the shift person will be assigned to
+         * @param persons List of persons to read/write
+         * @param cal Calendar to read/write
+         */
+        private void AssignPerson(int personIndex, int shiftIndex, Person[] persons, Calendar cal)
+        {
+            cal.shifts[shiftIndex] = personIndex;
+            persons[personIndex].Assign(shiftIndex);
+        }
 
         /**
          * Clean Person
@@ -259,6 +280,9 @@ namespace Shift
         // Conflict Resolution
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+            // HACK you left off here. you techinically coded a 3 person swap but the output looks weird. check the output because it looks like it never even
+            // reached the loop with triple check
+
         /**
          * Resolves Conflict 
          * the main entry point for resolving conflicts if shift has no available people.
@@ -276,7 +300,7 @@ namespace Shift
          * @param prefCal Calendar for how many people prefer each shift
          * @return void
          */
-        public void ResolveConflict(int shiftIndex, Person[] persons, List<int> queue, Calendar shiftCal, Calendar prefCal)
+        public void TrySingleSwap(int shiftIndex, Person[] persons, List<int> queue, Calendar shiftCal, Calendar prefCal, bool success)
         {
             List<int> assignedPersons = MakeAssignedList(persons);
 
@@ -296,10 +320,11 @@ namespace Shift
                         if (sliders.Count > 0)
                         {
                             CoverAndSlide(shiftIndex, currentPersonIndex, sliders, thisShift, shiftCal, persons, prefCal);
+                            success = true;
                             break; // end loop
                         } else
                         {
-                            prefCal.shifts[shiftIndex] = -2;
+                            prefCal.shifts[shiftIndex] = -2;    // -2 to signify that it is unassignable as opposed to 1- which means assigned
                             shiftCal.shifts[shiftIndex] = -1;
 
                         }
@@ -309,7 +334,6 @@ namespace Shift
                         prefCal.shifts[shiftIndex] = -2;
                         shiftCal.shifts[shiftIndex] = -1;
                     }
-
                     // else move to next queue number
                 }
             } else
@@ -317,7 +341,6 @@ namespace Shift
                 prefCal.shifts[shiftIndex] = -2;
                 shiftCal.shifts[shiftIndex] = -1;
             }
-
         }
 
         /**
@@ -357,7 +380,6 @@ namespace Shift
         {
             // check the person assigned at the current queue index
             /*
-             * HACK - fix null pointer
              *  The problem here is that if a shift hasn't been assigned, it is 0, and basically it still uses that 0 value,
              *  so it is incorrectly trying to access person 0 right here. So to change it you can either
              *  1) check to make sure this shift on prefCal isn't -2 which means it can't be assigned 
@@ -415,9 +437,6 @@ namespace Shift
 
             // set the shift as taken
             prefCal.shifts[slideToIndex] = -1;
-
-            // HACK combine previous checks, namely perosoncanslideup to help with the exchange here
-
         }
 
         /**
@@ -437,19 +456,151 @@ namespace Shift
         /**
          * Attempt to swap three people 
          */
-        private void AttemptThreeSwap(int shiftIndex, Person[] persons, List<int> queue, Calendar shiftCal, Calendar prefCal)
+        private void TryTripleSwap(int problemShiftIndex, Person[] persons, List<int> queue, Calendar shiftCal, Calendar prefCal)
         {
             List<int> assignedPersons = MakeAssignedList(persons);
 
             if (assignedPersons.Count > 2)
             {
+                List<int> canSwitch = GetEligibleSwitches(assignedPersons, problemShiftIndex, persons);
+                
+                if (canSwitch.Count > 0)
+                {
+                    bool success = false;
 
+                    // going backwards through the queue
+                    for (int i = (queue.Count - 1); i > 0; i--)
+                    {
+                        int thisPerson = -1;
+                        int q = queue[i];
+                        int onShift = shiftCal.shifts[q];
+
+                        // testing objects
+                        Person[] t_persons = persons;
+                        Calendar t_shiftCal = shiftCal;
+                        Calendar t_prefCal = prefCal;
+
+                        foreach (int p in canSwitch)
+                        {
+                            if (onShift == p)
+                            {
+                                thisPerson = p;
+                            }
+                        }
+
+                        // if person onShift canSwitch
+                        if (thisPerson != -1)
+                        {
+                            // entry point for next action
+                            bool tripleSwapAttempt = TryApplyingTripleSwap(thisPerson, problemShiftIndex, t_persons, t_shiftCal, t_prefCal, queue);
+
+                            // SUCCESS overwrite values
+                            if (tripleSwapAttempt == true)
+                            {
+                                // DEBUG
+                                Console.WriteLine("Triple swap completed");
+                                persons = t_persons;
+                                shiftCal = t_shiftCal;
+                                prefCal = t_prefCal;
+                                success = true;
+                                break;
+                            } else
+                            {
+                                // failure to cover this shift.
+                                // DEBUG
+                                Console.WriteLine("1 triple swap tried and failed");
+                            }
+                        }
+                    }
+
+                    // upon exit of loop
+
+                    if (!success)
+                    {
+                        prefCal.shifts[problemShiftIndex] = -2;
+                        shiftCal.shifts[problemShiftIndex] = -1;
+                    }
+                }
             } else
             {
                 Console.WriteLine("Not enough people");
             }
         }
 
+        /**
+         * Runs a simulation of reassigning and sees if the result can be terminated.
+         */
+        private bool TryApplyingTripleSwap(int fillPerson, int problemShiftIndex, Person[] testPersons, 
+            Calendar tempShiftCal, Calendar tempPrefCal, List<int> queue)
+        {
+            // MAKE SURE YOU'RE USING THE TEST CALENDAR AND TEST LIST OF PEOPLE!!!!
+            int newShiftToFill = testPersons[fillPerson].shiftAssigned; // get the shift that will be vacated
+
+            // temporarily assign person
+            AssignPerson(fillPerson, problemShiftIndex, testPersons, tempShiftCal);
+
+            // clean the previous shift
+            tempShiftCal.shifts[newShiftToFill] = -5;    // aribitrarily chose -5 for recognition purposes
+
+            // try to do a 2 person swap.
+            List<int> assigned = MakeAssignedList(testPersons);
+
+            if (assigned.Count > 1)
+            {
+                for (int i = queue.Count - 1; i > 0; i--)
+                {
+                    // check to make sure you're not checking the empty shift
+                    if (queue[i] != newShiftToFill)
+                    {
+                        // quick variables
+                        int thisShift = queue[i];
+                        int currentPersonIndex = tempShiftCal.shifts[thisShift];
+
+                        if (PersonCanFill(newShiftToFill, i, queue, tempShiftCal, testPersons))
+                        {
+                            List<int> sliders = GetPossibleSliders(newShiftToFill, testPersons);
+
+                            if (sliders.Count > 0)
+                            {
+                                CoverAndSlide(newShiftToFill, currentPersonIndex, sliders, thisShift, tempShiftCal, testPersons, tempPrefCal);
+                                return true;
+                                // end loop
+                            }
+                        }
+                        // else move to next queue number
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * Returns list of people eligible of switching into the problem shift position
+         * 
+         * @param assignedPersons a List provided with all people currently assigned
+         * @param toFillIndex integer index for the shift to be filled
+         * @param persons
+         */
+        private List<int> GetEligibleSwitches (List<int> assigned, int toFillIndex, Person[] persons)
+        {
+            List<int> eligible = new List<int>();
+
+            foreach (int pIndex in assigned)
+            {
+                foreach (int prefIndex in persons[pIndex].prefs)
+                {
+                    int shiftPref = dp.ShiftToArrayNum(prefIndex);
+                    if (toFillIndex == shiftPref)
+                    {
+                        eligible.Add(pIndex);
+                        break;
+                    }
+                }
+            }
+
+            return eligible;
+        }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Excel Data Processing
