@@ -96,6 +96,7 @@ namespace Shift
                     if (!conflictResolutionSuccess)
                     {
                         TryTripleSwap(shiftIndex, persons, queue, shiftCal, prefCal);
+                        Console.WriteLine("Triple Swap Attempted");
                     }
 
                 }
@@ -140,7 +141,7 @@ namespace Shift
          * @param p Person to clean
          * @param prefCal preference counter Calendar
          */
-        public void CleanPerson (Person p, Calendar prefCal)
+        public void CleanPerson(Person p, Calendar prefCal)
         {
             // remove 1 from each of preferences
             foreach (int pref in p.prefs)
@@ -166,7 +167,7 @@ namespace Shift
              *      allowing for each object to have data restored if need be.
              * NOTE: potential problem... forgot what it was
              */
-             p.Destroy();
+            p.Destroy();
         }
 
         /**
@@ -260,7 +261,7 @@ namespace Shift
         public List<int> GetPeoplePref(Person[] persons, int shiftNum)
         {
             List<int> peoplePref = new List<int>();
-            
+
             for (int i = 0; i < persons.Length; i++)
             {
                 foreach (int pref in persons[i].prefs)
@@ -280,8 +281,8 @@ namespace Shift
         // Conflict Resolution
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            // HACK you left off here. you techinically coded a 3 person swap but the output looks weird. check the output because it looks like it never even
-            // reached the loop with triple check
+        // HACK you left off here. you techinically coded a 3 person swap but the output looks weird. check the output because it looks like it never even
+        // reached the loop with triple check
 
         /**
          * Resolves Conflict 
@@ -322,13 +323,15 @@ namespace Shift
                             CoverAndSlide(shiftIndex, currentPersonIndex, sliders, thisShift, shiftCal, persons, prefCal);
                             success = true;
                             break; // end loop
-                        } else
+                        }
+                        else
                         {
                             prefCal.shifts[shiftIndex] = -2;    // -2 to signify that it is unassignable as opposed to 1- which means assigned
                             shiftCal.shifts[shiftIndex] = -1;
 
                         }
-                    } else
+                    }
+                    else
                     {
                         // if no fill found
                         prefCal.shifts[shiftIndex] = -2;
@@ -336,7 +339,8 @@ namespace Shift
                     }
                     // else move to next queue number
                 }
-            } else
+            }
+            else
             {
                 prefCal.shifts[shiftIndex] = -2;
                 shiftCal.shifts[shiftIndex] = -1;
@@ -407,7 +411,7 @@ namespace Shift
             return canCover;
         }
 
-       
+
 
         /**
          * Assigns people after verifying a Cover and a Slider
@@ -420,7 +424,7 @@ namespace Shift
          * @params shiftCal, persons, prefCal
          * @return void
          */
-        private void CoverAndSlide(int coverIndex, int covererIndex, List<int> sliders, 
+        private void CoverAndSlide(int coverIndex, int covererIndex, List<int> sliders,
             int slideToIndex, Calendar shiftCal, Person[] persons, Calendar prefCal)
         {
             // move coverer to the new shift
@@ -463,7 +467,7 @@ namespace Shift
             if (assignedPersons.Count > 2)
             {
                 List<int> canSwitch = GetEligibleSwitches(assignedPersons, problemShiftIndex, persons);
-                
+
                 if (canSwitch.Count > 0)
                 {
                     bool success = false;
@@ -504,7 +508,8 @@ namespace Shift
                                 prefCal = t_prefCal;
                                 success = true;
                                 break;
-                            } else
+                            }
+                            else
                             {
                                 // failure to cover this shift.
                                 // DEBUG
@@ -521,8 +526,15 @@ namespace Shift
                         shiftCal.shifts[problemShiftIndex] = -1;
                     }
                 }
-            } else
+                else
+                {
+                    // DEBUG
+                    Console.WriteLine("no one eligible");
+                }
+            }
+            else
             {
+                // DEBUG
                 Console.WriteLine("Not enough people");
             }
         }
@@ -530,7 +542,7 @@ namespace Shift
         /**
          * Runs a simulation of reassigning and sees if the result can be terminated.
          */
-        private bool TryApplyingTripleSwap(int fillPerson, int problemShiftIndex, Person[] testPersons, 
+        private bool TryApplyingTripleSwap(int fillPerson, int problemShiftIndex, Person[] testPersons,
             Calendar tempShiftCal, Calendar tempPrefCal, List<int> queue)
         {
             // MAKE SURE YOU'RE USING THE TEST CALENDAR AND TEST LIST OF PEOPLE!!!!
@@ -582,7 +594,7 @@ namespace Shift
          * @param toFillIndex integer index for the shift to be filled
          * @param persons
          */
-        private List<int> GetEligibleSwitches (List<int> assigned, int toFillIndex, Person[] persons)
+        private List<int> GetEligibleSwitches(List<int> assigned, int toFillIndex, Person[] persons)
         {
             List<int> eligible = new List<int>();
 

@@ -13,13 +13,13 @@ namespace Shift
         public DataProcessor() { }
 
         // set of characters (delimiters) that will separate into substrings
-        char[] commaDelim = {',', ' '};
+        char[] commaDelim = { ',', ' ' };
 
         public int[] Parse(String prefs)
         {
             // DateTime[] prefArray;
             // String testPrefs = "TUES 4PM-8PM, TUES 8PM-12AM, WEDS 12PM-4PM, WEDS 4PM-8PM, WEDS 8PM-12AM";
-        
+
             // begin parsing
             String[] splitString = prefs.Split(commaDelim, System.StringSplitOptions.RemoveEmptyEntries);
             int prefCount = (splitString.Length / 2);    // day and time count for 2 entries in the 
@@ -29,17 +29,20 @@ namespace Shift
             // for each entry in the split string, sorts into a day and time array 
             for (int i = 0; i < splitString.Length; i++)
             {
-                if (i == 0 || (i % 2) == 0) {
+                if (i == 0 || (i % 2) == 0)
+                {
                     // if even entry in split string, indicating a day
                     int evenArrayNumber = (i / 2); // for even numbers
                     day[evenArrayNumber] = splitString[i];
-                } else {
+                }
+                else
+                {
                     // if odd entry in split string, indicating a time
-                    int oddArrayNumber = (int)(((float) i / 2f) - 0.5f);
+                    int oddArrayNumber = (int)(((float)i / 2f) - 0.5f);
                     time[oddArrayNumber] = splitString[i];
                 }
             }
-            
+
             // print preferences
             /*
             for (int i = 0; i < prefCount; i++)
@@ -48,16 +51,16 @@ namespace Shift
                 System.Console.WriteLine(" " + time[i]);
             }
             */
-            
+
             // converts preferences into int array with preferences
             return PrefsToShiftNums(day, time);
         } // end parse
-        
+
         // Sorts the preferences of everyone into a calendar object and returns it
-        public Calendar SortMostPreferred (Person[] persons)
+        public Calendar SortMostPreferred(Person[] persons)
         {
             Calendar prefCal = new Calendar();
-            
+
             foreach (Person p in persons)
             { // TODO need to look at numbering system in shift to arry num i think my problem is there
                 foreach (int shift in p.prefs)
@@ -108,7 +111,7 @@ namespace Shift
                         shift = 0;
                         break;
                 }
-                
+
                 switch (times[i])
                 {
                     case "8AM-12PM":
@@ -129,9 +132,9 @@ namespace Shift
                 }
                 prefsAsShiftNums[i] = shift;
                 // write pref to the array
-                
+
             } // end for loop for conversion of each entry into numbers
-            
+
             // return ints
             return prefsAsShiftNums;
         } // end PrefsToShiftNums
@@ -149,43 +152,50 @@ namespace Shift
                 day = 0;
                 time = shift - 11;
                 arrayNum = day + time;
-            } else if (shift >= 20 && shift < 25)
+            }
+            else if (shift >= 20 && shift < 25)
             {
                 // start of tues. day starts at 4. substact shift by 21 to make 8am 0
                 day = 4;
                 time = shift - 21;
                 arrayNum = day + time;
-            } else if (shift >= 30 && shift < 35)
+            }
+            else if (shift >= 30 && shift < 35)
             {
                 // start of wed. day starts at 0. substact shift by 31 to make 8am 0
                 day = 8;
                 time = shift - 31;
                 arrayNum = day + time;
-            } else if (shift >= 40 && shift < 45)
+            }
+            else if (shift >= 40 && shift < 45)
             {
                 // start of thuf. day starts at 0. substact shift by 41 to make 8am 0
                 day = 12;
                 time = shift - 41;
                 arrayNum = day + time;
-            } else if (shift >= 50 && shift < 55)
+            }
+            else if (shift >= 50 && shift < 55)
             {
                 // start of fri. day starts at 0. substact shift by 51 to make 8am 0
                 day = 16;
                 time = shift - 51;
                 arrayNum = day + time;
-            } else if (shift >= 60 && shift < 65)
+            }
+            else if (shift >= 60 && shift < 65)
             {
                 // start of sat. day starts at 0. substact shift by 61 to make 8am 0
                 day = 20;
                 time = shift - 61;
                 arrayNum = day + time;
-            } else if (shift >= 70 && shift < 75)
+            }
+            else if (shift >= 70 && shift < 75)
             {
                 // start of sun. day starts at 0. substact shift by 71 to make 8am 0
                 day = 24;
                 time = shift - 71;
                 arrayNum = day + time;
-            } else
+            }
+            else
             {
                 arrayNum = -1;
                 Console.WriteLine("ERROR: invalid shift num");

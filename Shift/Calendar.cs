@@ -29,14 +29,14 @@ namespace Shift
 
         // NOTE you're going to assign the index number of the person to the shift calendar
         // you'll just convert to names later. This way you don't really need to handle the people here
-        public void WriteValue (int index, int value) 
+        public void WriteValue(int index, int value)
         {
             shifts[index] = value;
         }
-        
+
 
         // prints out to the console
-        public void ConsoleOut ()
+        public void ConsoleOut()
         {
             System.Console.WriteLine();
 

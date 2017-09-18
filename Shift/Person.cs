@@ -90,7 +90,8 @@ namespace Shift
                 prefs = prefsBak;
                 timestamp = timestampBak;
                 seniority = seniorityBak;
-            } else
+            }
+            else
             {
                 Console.WriteLine("ERROR: You haven't destroyed this person yet!!");
             }

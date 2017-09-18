@@ -1,41 +1,24 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Windows;
 using System.Diagnostics;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 
-////////////////////////////////
-// TODO list
-////////////////////////////////
-
-/**
- * 1) handle coord shifts or ghost shifts in the schedule.
- * 
- * 2) Need to handle user entry to lock in certain positions in schedule
- * 
- * 3) move to WPF
- */
-
-
-////////////////////////////////
-
-
 namespace Shift
 {
-    static class Program
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
     {
-
-        [STAThread]
-        static void Main()
+        public static void Start()
         {
-            // System.Windows.Forms.Application.EnableVisualStyles();
-            // System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-            // System.Windows.Forms.Application.Run(new Form1());
-            
+
             ////////////////////////////////////////////////////////////////
             // EXCEL Setup
             ////////////////////////////////////////////////////////////////
@@ -74,7 +57,7 @@ namespace Shift
             // Excel Data
             int timestampCol = 1;
             int nameCol = 2;
-            int prefCol = 3;
+            int prefCol = 3;   
             int seniorityCol = 4;
             String[] names = s.GetStringData(xlWorksheet, nameCol, personCount);
             String[] prefs = s.GetStringData(xlWorksheet, prefCol, personCount);
@@ -94,7 +77,7 @@ namespace Shift
             persons = s.CreatePersons(names, prefs, timestamps, seniority);
             // DEBUG test results using random seniorities
             Random r = new Random();
-            foreach(Person p in persons)
+            foreach (Person p in persons)
             {
                 p.RandomizeSeniority(r);
             }
@@ -104,7 +87,7 @@ namespace Shift
             // DEBUG-ish: print supposedly working calender #firsttry????
             Calendar testCalendar = dp.SortMostPreferred(persons);
             testCalendar.ConsoleOut();
-            
+
             // Initialize vars to start assigning shifts
             Calendar shiftCalendar = new Calendar();
             List<int> unassigned = new List<int>();
@@ -120,19 +103,12 @@ namespace Shift
                 Console.WriteLine(persons[i].name);
             }
 
-
-
-
-
             ////////////////////////////////////////////////////////////////
             // CLEANUP
             ////////////////////////////////////////////////////////////////
 
             XlCleanup(xlApp, xlWorkbook, xlWorksheet, xlRange);
         }
-
-       
-
 
         // TODO General cleanup. Releases Com objects. Takes care of Excel instance staying open after program finishes
         static void XlCleanup(Excel.Application xlApp, Excel.Workbook xlWorkbook, Excel.Worksheet xlWorksheet, Excel.Range xlRange)
@@ -148,4 +124,6 @@ namespace Shift
             Console.WriteLine("objects released");
         }
     }
+
+
 }

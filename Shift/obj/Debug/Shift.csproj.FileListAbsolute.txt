@@ -1,12 +1,18 @@
-C:\Users\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.csprojResolveAssemblyReference.cache
-C:\Users\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.csproj.ResolveComReference.cache
-C:\Users\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.Properties.Resources.resources
-C:\Users\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.csproj.GenerateResource.Cache
-C:\Users\Ryan\Documents\GitHub\Shift\Shift\bin\Debug\Shift.exe.config
-C:\Users\Ryan\Documents\GitHub\Shift\Shift\bin\Debug\Shift.exe
-C:\Users\Ryan\Documents\GitHub\Shift\Shift\bin\Debug\Shift.pdb
-C:\Users\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.exe
-C:\Users\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.pdb
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\bin\Debug\Shift.exe.config
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\bin\Debug\Shift.exe
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\bin\Debug\Shift.pdb
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\obj\Debug\Shift.csprojResolveAssemblyReference.cache
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\obj\Debug\Shift.csproj.ResolveComReference.cache
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\obj\Debug\MainWindow.g.cs
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\obj\Debug\App.g.cs
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\obj\Debug\Shift_MarkupCompile.cache
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\obj\Debug\Shift_MarkupCompile.lref
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\obj\Debug\MainWindow.baml
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\obj\Debug\Shift.g.resources
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\obj\Debug\Shift.Properties.Resources.resources
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\obj\Debug\Shift.csproj.GenerateResource.Cache
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\obj\Debug\Shift.exe
+d:\ryan\documents\visual studio 2015\Projects\Shift\Shift\obj\Debug\Shift.pdb
 D:\Ryan\Documents\GitHub\Shift\Shift\bin\Debug\Shift.exe.config
 D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.csproj.ResolveComReference.cache
 D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.exe
@@ -14,5 +20,11 @@ D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.pdb
 D:\Ryan\Documents\GitHub\Shift\Shift\bin\Debug\Shift.exe
 D:\Ryan\Documents\GitHub\Shift\Shift\bin\Debug\Shift.pdb
 D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.csprojResolveAssemblyReference.cache
+D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\MainWindow.g.cs
+D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\App.g.cs
+D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift_MarkupCompile.cache
+D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift_MarkupCompile.lref
+D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\MainWindow.baml
+D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.g.resources
 D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.Properties.Resources.resources
 D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.csproj.GenerateResource.Cache
