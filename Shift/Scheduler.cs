@@ -2,6 +2,13 @@
  * SCHEDULER
  * 
  * Object that holds all the methods to scheduling, assigning shifts and conflict resolution
+ * 
+ * 
+ * todo list
+ * HACK need to smoothly pass off between the first priority column to second priority column to fill any other missing
+ *      shifts.
+ *      
+ * TODO need to add capability of user input for shifts.
  */
 
 using System;
@@ -27,8 +34,7 @@ namespace Shift
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Shift Assigning - Section where shifts are distributed to each person
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        // TODO make this return the calendar with shfits assigned
+        
         /**
          * Assign Shifts
          * Entry point for shift assignment. The queue list gets created here. Cycles 28 times (for each shift) searching 

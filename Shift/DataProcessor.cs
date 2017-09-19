@@ -59,7 +59,7 @@ namespace Shift
             Calendar prefCal = new Calendar();
 
             foreach (Person p in persons)
-            { // TODO need to look at numbering system in shift to arry num i think my problem is there
+            { 
                 foreach (int shift in p.prefs)
                 {
                     prefCal.shifts[ShiftToArrayNum(shift)]++;

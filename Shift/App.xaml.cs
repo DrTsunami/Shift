@@ -33,8 +33,7 @@ namespace Shift
                     Console.WriteLine("killed process");
                 }
             }
-
-            // TODO allow the program to pick a file.
+            
             // TODO make a verification process (check a cell for a certain value) to check if the file is a valid one.
             Excel.Application xlApp = new Excel.Application();
             Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(path);
@@ -99,8 +98,7 @@ namespace Shift
 
             XlCleanup(xlApp, xlWorkbook, xlWorksheet, xlRange);
         }
-
-        // TODO General cleanup. Releases Com objects. Takes care of Excel instance staying open after program finishes
+        
         static void XlCleanup(Excel.Application xlApp, Excel.Workbook xlWorkbook, Excel.Worksheet xlWorksheet, Excel.Range xlRange)
         {
             Marshal.ReleaseComObject(xlRange);
