@@ -53,12 +53,6 @@ namespace Shift
             System.Console.WriteLine();
         }
 
-        // DEBUG temporary system to randomize the seniority. Will be replaced with real seniority
-        public void RandomizeSeniority(Random r)
-        {
-            seniority = r.Next(6);
-        }
-
         public int GetShift()
         {
             return shiftAssigned;

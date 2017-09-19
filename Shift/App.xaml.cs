@@ -16,7 +16,7 @@ namespace Shift
     /// </summary>
     public partial class App : Application
     {
-        public static void Start()
+        public static void Start(String path)
         {
 
             ////////////////////////////////////////////////////////////////
@@ -37,8 +37,7 @@ namespace Shift
             // TODO allow the program to pick a file.
             // TODO make a verification process (check a cell for a certain value) to check if the file is a valid one.
             Excel.Application xlApp = new Excel.Application();
-            // Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(@"C:\Users\Ryan\Documents\GitHub\Shift\Shift\sheets\Responses.xlsx");
-            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(@"D:\Ryan\Documents\GitHub\Shift\Shift\sheets\Responses.xlsx");
+            Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(path);
             Excel.Worksheet xlWorksheet = xlWorkbook.Sheets[1];
             Excel.Range xlRange = xlWorksheet.UsedRange;
 
@@ -53,18 +52,16 @@ namespace Shift
             int personCount = 28;
             Person[] persons = new Person[personCount];
 
-
             // Excel Data
+            // EDIT
             int timestampCol = 1;
             int nameCol = 2;
-            int prefCol = 3;   
-            int seniorityCol = 4;
+            int prefCol = 4;   
+            int seniorityCol = 3;
             String[] names = s.GetStringData(xlWorksheet, nameCol, personCount);
             String[] prefs = s.GetStringData(xlWorksheet, prefCol, personCount);
             DateTime[] timestamps = s.GetTimestampData(xlWorksheet, timestampCol, personCount);
             int[] seniority = s.GetIntData(xlWorksheet, seniorityCol, personCount);
-
-
 
             ////////////////////////////////////////////////////////////////
             // METHODS
@@ -75,13 +72,6 @@ namespace Shift
 
             // Create and print people
             persons = s.CreatePersons(names, prefs, timestamps, seniority);
-            // DEBUG test results using random seniorities
-            Random r = new Random();
-            foreach (Person p in persons)
-            {
-                p.RandomizeSeniority(r);
-            }
-            // end DEBUG
             s.ShowPeople(persons);
 
             // DEBUG-ish: print supposedly working calender #firsttry????

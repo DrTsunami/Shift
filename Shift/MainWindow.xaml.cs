@@ -13,12 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Microsoft.Office.Interop.Excel;
+
 namespace Shift
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : System.Windows.Window
     {
         public MainWindow()
         {
@@ -27,7 +29,40 @@ namespace Shift
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            App.Start();
+            // create open file dialog
+            Microsoft.Win32.OpenFileDialog fd = new Microsoft.Win32.OpenFileDialog();
+
+            // set filter for file extension
+            fd.DefaultExt = ".xlsx";
+
+            // Display fd 
+            Nullable<bool> result = fd.ShowDialog();
+
+            // Get selected file name
+            if (result == true)
+            {
+                App.Start(fd.FileName);
+            }
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            SheetProcessor sp = new SheetProcessor();
+
+            // create open file dialog
+            Microsoft.Win32.OpenFileDialog fd = new Microsoft.Win32.OpenFileDialog();
+
+            // set filter for file extension
+            fd.DefaultExt = ".xlsx";
+
+            // Display fd 
+            Nullable<bool> result = fd.ShowDialog();
+
+            // Get selected file name
+            if (result == true)
+            {
+                sp.Reformat(fd.FileName);
+            }
         }
     }
 }

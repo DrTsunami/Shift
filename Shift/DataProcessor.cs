@@ -17,9 +17,6 @@ namespace Shift
 
         public int[] Parse(String prefs)
         {
-            // DateTime[] prefArray;
-            // String testPrefs = "TUES 4PM-8PM, TUES 8PM-12AM, WEDS 12PM-4PM, WEDS 4PM-8PM, WEDS 8PM-12AM";
-
             // begin parsing
             String[] splitString = prefs.Split(commaDelim, System.StringSplitOptions.RemoveEmptyEntries);
             int prefCount = (splitString.Length / 2);    // day and time count for 2 entries in the 
@@ -86,25 +83,25 @@ namespace Shift
                 int shift;
                 switch (days[i])
                 {
-                    case "MON":
+                    case "Monday":
                         shift = 10;
                         break;
-                    case "TUES":
+                    case "Tuesday":
                         shift = 20;
                         break;
-                    case "WEDS":
+                    case "Wednesday":
                         shift = 30;
                         break;
-                    case "THURS":
+                    case "Thursday":
                         shift = 40;
                         break;
-                    case "FRI":
+                    case "Friday":
                         shift = 50;
                         break;
-                    case "SAT":
+                    case "Saturday":
                         shift = 60;
                         break;
-                    case "SUN":
+                    case "Sunday":
                         shift = 70;
                         break;
                     default:
@@ -114,16 +111,16 @@ namespace Shift
 
                 switch (times[i])
                 {
-                    case "8AM-12PM":
+                    case "8am-12pm":
                         shift = shift + 1;
                         break;
-                    case "12PM-4PM":
+                    case "12pm-4pm":
                         shift = shift + 2;
                         break;
-                    case "4PM-8PM":
+                    case "4pm-8pm":
                         shift = shift + 3;
                         break;
-                    case "8PM-12AM":
+                    case "8pm-12am":
                         shift = shift + 4;
                         break;
                     default:

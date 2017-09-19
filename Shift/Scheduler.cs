@@ -281,9 +281,6 @@ namespace Shift
         // Conflict Resolution
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        // HACK you left off here. you techinically coded a 3 person swap but the output looks weird. check the output because it looks like it never even
-        // reached the loop with triple check
-
         /**
          * Resolves Conflict 
          * the main entry point for resolving conflicts if shift has no available people.
