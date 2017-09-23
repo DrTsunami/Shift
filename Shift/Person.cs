@@ -17,10 +17,8 @@ namespace Shift
 
         // backup vars
         public int[] prefsBak;
-        public DateTime timestampBak;
-        public int seniorityBak;
 
-
+        public Person() { }
 
         public Person(String name, int[] prefs, DateTime timestamp, int seniority)
         {
@@ -28,6 +26,18 @@ namespace Shift
             this.prefs = prefs;
             this.timestamp = timestamp;
             this.seniority = seniority;
+
+            prefsBak = new int[prefs.Length];
+        }
+
+        public void MakeClone(Person p)
+        {
+            this.name = p.name;
+            this.prefs = p.prefs;
+            this.timestamp = p.timestamp;
+            this.seniority = p.seniority;
+            this.shiftAssigned = p.shiftAssigned;
+            this.prefsBak = p.prefsBak;
         }
 
         public String GetName()
@@ -63,17 +73,13 @@ namespace Shift
             shiftAssigned = shiftIndex;
         }
 
-        public void Destroy()
+        public void HidePrefs()
         {
             // make backup
             prefsBak = prefs;
-            timestampBak = timestamp;
-            seniorityBak = seniority;
 
-            // Destroy current values
+            // Destroy current pref
             prefs = new int[0];
-            timestamp = new DateTime();
-            seniority = 0;
             assigned = true;
         }
 
@@ -82,8 +88,6 @@ namespace Shift
             if (assigned)
             {
                 prefs = prefsBak;
-                timestamp = timestampBak;
-                seniority = seniorityBak;
             }
             else
             {

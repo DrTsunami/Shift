@@ -34,6 +34,17 @@ namespace Shift
             shifts[index] = value;
         }
 
+        public void OverwriteShifts(int[] values)
+        {
+            if (values.Length == shiftCount)
+            {
+                this.shifts = values;
+            } else
+            {
+                Console.WriteLine("ERROR: the shifts array you are trying to overwrite with is not the right size");
+            }
+        }
+
 
         // prints out to the console
         public void ConsoleOut()

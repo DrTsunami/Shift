@@ -94,16 +94,20 @@ namespace Shift
 
                     // DEBUG
                     // prefCal.shifts[shiftIndex] = -2;
-
-                    bool conflictResolutionSuccess = false;
-
-                    TrySingleSwap(shiftIndex, persons, queue, shiftCal, prefCal, conflictResolutionSuccess);
-
-                    if (!conflictResolutionSuccess)
+                    
+                    
+                    if (!TrySingleSwap(shiftIndex, persons, queue, shiftCal, prefCal))
                     {
                         TryTripleSwap(shiftIndex, persons, queue, shiftCal, prefCal);
                         Console.WriteLine("Triple Swap Attempted");
                     }
+
+                    /*
+                    if (!conflictResolutionSuccess)
+                    {
+                        
+                    }
+                    */
 
                 }
 
@@ -173,7 +177,7 @@ namespace Shift
              *      allowing for each object to have data restored if need be.
              * NOTE: potential problem... forgot what it was
              */
-            p.Destroy();
+            p.HidePrefs();
         }
 
         /**
@@ -304,7 +308,7 @@ namespace Shift
          * @param prefCal Calendar for how many people prefer each shift
          * @return void
          */
-        public void TrySingleSwap(int shiftIndex, Person[] persons, List<int> queue, Calendar shiftCal, Calendar prefCal, bool success)
+        public bool TrySingleSwap(int shiftIndex, Person[] persons, List<int> queue, Calendar shiftCal, Calendar prefCal)
         {
             List<int> assignedPersons = MakeAssignedList(persons);
 
@@ -324,8 +328,8 @@ namespace Shift
                         if (sliders.Count > 0)
                         {
                             CoverAndSlide(shiftIndex, currentPersonIndex, sliders, thisShift, shiftCal, persons, prefCal);
-                            success = true;
-                            break; // end loop
+                            return true;
+                            // end loop
                         }
                         else
                         {
@@ -342,11 +346,13 @@ namespace Shift
                     }
                     // else move to next queue number
                 }
+                return false;
             }
             else
             {
                 prefCal.shifts[shiftIndex] = -2;
                 shiftCal.shifts[shiftIndex] = -1;
+                return false;
             }
         }
 
@@ -444,6 +450,9 @@ namespace Shift
 
             // set the shift as taken
             prefCal.shifts[slideToIndex] = -1;
+
+            // DEBUG
+            Console.WriteLine("Swap success!!!!");
         }
 
         /**
@@ -466,6 +475,7 @@ namespace Shift
         private void TryTripleSwap(int problemShiftIndex, Person[] persons, List<int> queue, Calendar shiftCal, Calendar prefCal)
         {
             List<int> assignedPersons = MakeAssignedList(persons);
+            int personCount = 28;
 
             if (assignedPersons.Count > 2)
             {
@@ -482,10 +492,22 @@ namespace Shift
                         int q = queue[i];
                         int onShift = shiftCal.shifts[q];
 
-                        // testing objects
-                        Person[] t_persons = persons;
-                        Calendar t_shiftCal = shiftCal;
-                        Calendar t_prefCal = prefCal;
+
+                        Person[] t_persons = new Person[personCount];
+                        Calendar t_shiftCal = new Calendar();
+                        Calendar t_prefCal = new Calendar();
+
+                        // fill out cloned persons
+                        for (int j = 0; j < t_persons.Length; j++)
+                        {
+                            t_persons[j] = new Person();
+                            t_persons[j].MakeClone(persons[j]);
+                        }
+
+                        // make cloned calendars;
+                        t_shiftCal.shifts = shiftCal.shifts;
+                        t_prefCal.shifts = prefCal.shifts;
+
 
                         foreach (int p in canSwitch)
                         {
@@ -555,6 +577,7 @@ namespace Shift
             AssignPerson(fillPerson, problemShiftIndex, testPersons, tempShiftCal);
 
             // clean the previous shift
+            // HACK fix this out of bounds error
             tempShiftCal.shifts[newShiftToFill] = -5;    // aribitrarily chose -5 for recognition purposes
 
             // try to do a 2 person swap.
@@ -603,7 +626,7 @@ namespace Shift
 
             foreach (int pIndex in assigned)
             {
-                foreach (int prefIndex in persons[pIndex].prefs)
+                foreach (int prefIndex in persons[pIndex].prefsBak)
                 {
                     int shiftPref = dp.ShiftToArrayNum(prefIndex);
                     if (toFillIndex == shiftPref)
@@ -703,7 +726,7 @@ namespace Shift
 
             for (int i = 0; i < names.Length; i++)
             {
-                int[] prefs = dp.Parse(stringPrefs[i]);
+                int[] prefs = dp.ParsePrefs(stringPrefs[i]);
 
                 // creates person
                 persons[i] = new Person(names[i], prefs, timestamps[i], seniority[i]);

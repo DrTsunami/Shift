@@ -12,8 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
 using Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 
 namespace Shift
 {
@@ -22,6 +22,16 @@ namespace Shift
     /// </summary>
     public partial class MainWindow : System.Windows.Window
     {
+
+        ////////////////////////////////////////////////////////////////////////////////////////
+        // vars
+        ////////////////////////////////////////////////////////////////////////////////////////
+        
+        int sheetVerifyCol = 1;
+        int sheetVerifyRow = 40;
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////
         public MainWindow()
         {
             InitializeComponent();
@@ -33,7 +43,7 @@ namespace Shift
             Microsoft.Win32.OpenFileDialog fd = new Microsoft.Win32.OpenFileDialog();
 
             // set filter for file extension
-            fd.DefaultExt = ".xlsx";
+            fd.Filter = "Excel Files (*.xlsx)| *.xlsx";
 
             // Display fd 
             Nullable<bool> result = fd.ShowDialog();
@@ -41,7 +51,14 @@ namespace Shift
             // Get selected file name
             if (result == true)
             {
-                App.Start(fd.FileName);
+                if (VerifyFile(fd.FileName.ToString()))
+                {
+                    App.Start(fd.FileName.ToString());
+                } else
+                {
+                    Console.WriteLine("ERROR: file not verified. Please verify file");
+                    MessageBox.Show("File not verified, please verify file by inputting '[VERIFIED]' in the cell [1, 40]");
+                }
             }
         }
 
@@ -63,6 +80,49 @@ namespace Shift
             {
                 sp.Reformat(fd.FileName);
             }
+        }
+
+        private bool VerifyFile(String path)
+        {
+            Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
+            Microsoft.Office.Interop.Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(path);
+            Microsoft.Office.Interop.Excel.Worksheet xlWorksheet = xlWorkbook.Sheets[1];
+            Microsoft.Office.Interop.Excel.Range xlRange = xlWorksheet.UsedRange;
+
+            String verifyCell = (xlWorksheet.Cells[sheetVerifyRow, sheetVerifyCol] as
+                Microsoft.Office.Interop.Excel.Range).Value;
+
+            if (verifyCell != null)
+            {
+                if (verifyCell.Equals("[VERIFIED]"))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            } else
+            {
+                return false;
+            }
+            
+        }
+
+        private void XlCleanup(Microsoft.Office.Interop.Excel.Application xlApp,
+            Microsoft.Office.Interop.Excel.Workbook xlWorkbook,
+            Microsoft.Office.Interop.Excel.Worksheet xlWorksheet,
+            Microsoft.Office.Interop.Excel.Range xlRange)
+        {
+            Marshal.ReleaseComObject(xlRange);
+            Marshal.ReleaseComObject(xlWorksheet);
+
+            xlWorkbook.Close();
+            Marshal.ReleaseComObject(xlWorkbook);
+
+            xlApp.Quit();
+            Marshal.ReleaseComObject(xlApp);
+            Console.WriteLine("objects released");
         }
     }
 }

@@ -37,25 +37,16 @@ namespace Shift
             Excel.Worksheet xlWorksheet = xlWorkbook.Sheets[1];
             Excel.Range xlRange = xlWorksheet.UsedRange;
 
-
             ////////////////////////////////////////////////////////////////
             // VARS
             ////////////////////////////////////////////////////////////////
 
-            // Classes
-            DataProcessor dp = new DataProcessor();
-
             int personCount = 28;
-            Person[] persons = new Person[personCount];
 
 
             // Excel Data
             int timestampCol = 1;
-            int nameCol = 2;
-            int prefCol = 4;
             int seniorityCol = 3;
-            String[] names = GetStringData(xlWorksheet, nameCol, personCount);
-            String[] prefs = GetStringData(xlWorksheet, prefCol, personCount);
             DateTime[] timestamps = GetTimestampData(xlWorksheet, timestampCol, personCount);
             String[] seniorData = GetStringData(xlWorksheet, seniorityCol, personCount);
 
@@ -161,6 +152,9 @@ namespace Shift
         // Excel Data Processing
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        
+
+
         /**
          * Returns string array of any specified col with Strings as inputs
          * NOTE: rowStart indicates when the data begins
@@ -169,7 +163,7 @@ namespace Shift
          * @param col integer referencing the col we want to grab data from
          * @param personCount integer representing the amount of people/entries 
          */
-        public String[] GetStringData(Excel.Worksheet xlWorksheet, int col, int personCount)
+        private String[] GetStringData(Excel.Worksheet xlWorksheet, int col, int personCount)
         {
             int rowStart = 2;
             int rowEnd = 29;

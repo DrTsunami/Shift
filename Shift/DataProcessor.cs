@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Excel = Microsoft.Office.Interop.Excel;
+
 
 namespace Shift
 {
@@ -15,7 +17,7 @@ namespace Shift
         // set of characters (delimiters) that will separate into substrings
         char[] commaDelim = { ',', ' ' };
 
-        public int[] Parse(String prefs)
+        public int[] ParsePrefs(String prefs)
         {
             // begin parsing
             String[] splitString = prefs.Split(commaDelim, System.StringSplitOptions.RemoveEmptyEntries);
@@ -52,6 +54,81 @@ namespace Shift
             // converts preferences into int array with preferences
             return PrefsToShiftNums(day, time);
         } // end parse
+
+        /**
+         * Converts the sheet data into seniority integers and writes to the excel file
+         * 
+         * @param worksheet Excel Worksheet output
+         * @localparam rowStart integer representing the row number for which data starts
+         */
+        public void ConvertAndWriteSeniority(Excel.Worksheet worksheet, int seniorityCol, int personCount)
+        {
+            int rowStart = 2;
+
+            // Parse the data for seniority
+
+            String[] seniorData = GetStringData(worksheet, seniorityCol, personCount);
+            char[] delim = { ',', ' ' };
+            int[] year = new int[seniorData.Length];
+            int[] season = new int[seniorData.Length];
+            int[] seniority = new int[seniorData.Length];
+
+            for (int i = 0; i < seniorData.Length; i++)
+            {
+                String[] split = seniorData[i].Split(delim, System.StringSplitOptions.RemoveEmptyEntries);
+
+                int.TryParse(split[1], out year[i]);
+
+                switch (split[0])
+                {
+                    case ("Winter"):
+                        season[i] = 1;
+                        break;
+                    case ("Spring"):
+                        season[i] = 2;
+                        break;
+                    case ("Summer"):
+                        season[i] = 3;
+                        break;
+                    case ("Fall"):
+                        season[i] = 4;
+                        break;
+                    default:
+                        Console.WriteLine("ERROR: invalid entry for seniority season");
+                        break;
+                }
+            }
+
+
+            for (int i = 0; i < seniorData.Length; i++)
+            {
+                // TODO stop this static reference to thisYear/szn
+                int yearsBetweenModifier = (App.thisYear - year[i]) * 10;   // multiply by 10 to add the weight needed
+                int seasonDifference = App.thisSeason - season[i];
+
+                if (yearsBetweenModifier == 0)
+                {
+                    seniority[i] = seasonDifference;
+                }
+                else
+                {
+                    seniority[i] = yearsBetweenModifier - seasonDifference;
+                }
+
+                if (seniority[i] < 0)
+                {
+                    // DEBUG
+                    Console.WriteLine("ERROR: someone is committing an act of tomfoolery. he/she is doomed to the last possible priority");
+                }
+
+            }
+
+            // fill the data for seniority
+            for (int i = rowStart; i < rowStart + personCount; i++)
+            {
+                (worksheet.Cells[i, seniorityCol] as Excel.Range).Value = seniority[i - rowStart];
+            }
+        }
 
         // Sorts the preferences of everyone into a calendar object and returns it
         public Calendar SortMostPreferred(Person[] persons)
@@ -200,6 +277,21 @@ namespace Shift
 
             return arrayNum;
         } // end ShiftToArrayNum
+
+        private String[] GetStringData(Excel.Worksheet xlWorksheet, int col, int personCount)
+        {
+            int rowStart = 2;
+            int rowEnd = 29;
+            int colNumber = col;
+
+            String[] data = new String[personCount];
+            for (int i = rowStart; i < rowEnd + 1; i++)
+            {
+                data[i - rowStart] = (xlWorksheet.Cells[i, colNumber] as Excel.Range).Value;
+            }
+
+            return data;
+        }
 
 
     } // end DataProcessing

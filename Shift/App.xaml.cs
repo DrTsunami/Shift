@@ -16,9 +16,12 @@ namespace Shift
     /// </summary>
     public partial class App : Application
     {
+        // TODO make this an input box
+        public static int thisYear = 2017; // CHANGE THIS WHEN YEAR CHANGES
+        public static int thisSeason = 4; // 1. winter, 2. spring, 3. summer, 4. fall
+
         public static void Start(String path)
         {
-
             ////////////////////////////////////////////////////////////////
             // EXCEL Setup
             ////////////////////////////////////////////////////////////////
@@ -37,8 +40,13 @@ namespace Shift
             // TODO make a verification process (check a cell for a certain value) to check if the file is a valid one.
             Excel.Application xlApp = new Excel.Application();
             Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(path);
+
+            // creates the copy and makes it the active one
+            xlWorkbook = xlApp.Workbooks.Open(CreateCopy(xlWorkbook));            
+
             Excel.Worksheet xlWorksheet = xlWorkbook.Sheets[1];
             Excel.Range xlRange = xlWorksheet.UsedRange;
+
 
             ////////////////////////////////////////////////////////////////
             // VARS
@@ -52,15 +60,36 @@ namespace Shift
             Person[] persons = new Person[personCount];
 
             // Excel Data
+
             // EDIT
             int timestampCol = 1;
             int nameCol = 2;
             int prefCol = 4;   
             int seniorityCol = 3;
-            String[] names = s.GetStringData(xlWorksheet, nameCol, personCount);
-            String[] prefs = s.GetStringData(xlWorksheet, prefCol, personCount);
-            DateTime[] timestamps = s.GetTimestampData(xlWorksheet, timestampCol, personCount);
-            int[] seniority = s.GetIntData(xlWorksheet, seniorityCol, personCount);
+
+            dp.ConvertAndWriteSeniority(xlWorksheet, seniorityCol, personCount);
+
+            // create arrays of data from the excel sheet
+            String[] names = new String[personCount];
+            String[] prefs = new String[personCount];
+            DateTime[] timestamps = new DateTime[personCount];
+            int[] seniority = new int[personCount];
+
+            try
+            {
+                names = s.GetStringData(xlWorksheet, nameCol, personCount);
+                prefs = s.GetStringData(xlWorksheet, prefCol, personCount);
+                timestamps = s.GetTimestampData(xlWorksheet, timestampCol, personCount);
+                seniority = s.GetIntData(xlWorksheet, seniorityCol, personCount);
+
+            }
+
+            catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
+            {
+                Console.WriteLine("ERROR: you have a null value");
+            }
+            
+
 
             ////////////////////////////////////////////////////////////////
             // METHODS
@@ -96,10 +125,16 @@ namespace Shift
             // CLEANUP
             ////////////////////////////////////////////////////////////////
 
+            SaveOutput(xlWorkbook);
             XlCleanup(xlApp, xlWorkbook, xlWorksheet, xlRange);
         }
-        
-        static void XlCleanup(Excel.Application xlApp, Excel.Workbook xlWorkbook, Excel.Worksheet xlWorksheet, Excel.Range xlRange)
+
+        private static void SaveOutput(Excel.Workbook wb)
+        {
+            wb.Save();
+        }
+
+        private static void XlCleanup(Excel.Application xlApp, Excel.Workbook xlWorkbook, Excel.Worksheet xlWorksheet, Excel.Range xlRange)
         {
             Marshal.ReleaseComObject(xlRange);
             Marshal.ReleaseComObject(xlWorksheet);
@@ -111,7 +146,13 @@ namespace Shift
             Marshal.ReleaseComObject(xlApp);
             Console.WriteLine("objects released");
         }
+
+        private static String CreateCopy(Excel.Workbook wb)
+        {
+            // TODO give a file location
+            String path = @"C:\Users\Ryan\Desktop\ShiftOutput.xlsx";
+            wb.SaveCopyAs(path);
+            return path;
+        }
     }
-
-
 }
