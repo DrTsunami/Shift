@@ -4,9 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
 namespace Shift
 {
-    class Person
+    [Serializable]
+    public class Person : ICloneable
     {
         public String name;
         public int[] prefs;
@@ -30,37 +35,23 @@ namespace Shift
             prefsBak = new int[prefs.Length];
         }
 
-        public void MakeClone(Person p)
+        // Cloning method
+        public object Clone()
         {
-            this.name = p.name;
-            this.prefs = p.prefs;
-            this.timestamp = p.timestamp;
-            this.seniority = p.seniority;
-            this.shiftAssigned = p.shiftAssigned;
-            this.prefsBak = p.prefsBak;
-        }
-
-        public String GetName()
-        {
-            return name;
-        }
-
-        public void Print()
-        {
-            System.Console.WriteLine(name);
-
-            System.Console.Write("Preferences: ");
-
-            foreach (int i in prefs)
+            using (MemoryStream stream = new MemoryStream())
             {
-                System.Console.Write(i + " ");
-            }
+                if (this.GetType().IsSerializable)
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, this);
+                    stream.Position = 0;
+                    return formatter.Deserialize(stream);
+                }
 
-            System.Console.WriteLine();
-
-            System.Console.WriteLine("Timestamp: " + timestamp);
-            System.Console.WriteLine("Seniority: " + seniority);
-            System.Console.WriteLine();
+                // DEBUG
+                Console.WriteLine("ERROR: Clone process failed");
+                return null;
+            } 
         }
 
         public int GetShift()
@@ -93,6 +84,24 @@ namespace Shift
             {
                 Console.WriteLine("ERROR: You haven't destroyed this person yet!!");
             }
+        }
+
+        public void Print()
+        {
+            System.Console.WriteLine(name);
+
+            System.Console.Write("Preferences: ");
+
+            foreach (int i in prefs)
+            {
+                System.Console.Write(i + " ");
+            }
+
+            System.Console.WriteLine();
+
+            System.Console.WriteLine("Timestamp: " + timestamp);
+            System.Console.WriteLine("Seniority: " + seniority);
+            System.Console.WriteLine();
         }
     }
 }

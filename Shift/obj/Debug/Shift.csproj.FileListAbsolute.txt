@@ -43,3 +43,4 @@ C:\Users\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.Properties.Resources.
 C:\Users\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.csproj.GenerateResource.Cache
 C:\Users\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.exe
 C:\Users\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.pdb
+D:\Ryan\Documents\GitHub\Shift\Shift\obj\Debug\Shift.csproj.CoreCompileInputs.cache

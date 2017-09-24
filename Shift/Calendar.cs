@@ -4,9 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
 namespace Shift
 {
-    class Calendar
+    [Serializable]
+    public class Calendar : ICloneable
     {
         String name;
         public int[] shifts;
@@ -24,6 +28,25 @@ namespace Shift
                 {
                     shifts[i] = i;
                 }
+            }
+        }
+
+        // Cloning method
+        public object Clone()
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                if (this.GetType().IsSerializable)
+                {
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, this);
+                    stream.Position = 0;
+                    return formatter.Deserialize(stream);
+                }
+
+                // DEBUG
+                Console.WriteLine("ERROR: Clone process failed");
+                return null;
             }
         }
 

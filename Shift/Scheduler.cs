@@ -488,26 +488,28 @@ namespace Shift
                     // going backwards through the queue
                     for (int i = (queue.Count - 1); i > 0; i--)
                     {
+                        
                         int thisPerson = -1;
                         int q = queue[i];
                         int onShift = shiftCal.shifts[q];
 
+                        // HACK 1. Initializes the clones, or at least the variables of clones.
+                        // persons
+                        // tempshiftscal
+                        // tempprefcal
+                        Calendar tempShiftCal = shiftCal.Clone() as Calendar;
+                        Calendar tempPrefCal = prefCal.Clone() as Calendar;
+                        Person[] tempPersons = new Person[persons.Length];
 
-                        Person[] t_persons = new Person[personCount];
-                        Calendar t_shiftCal = new Calendar();
-                        Calendar t_prefCal = new Calendar();
-
-                        // fill out cloned persons
-                        for (int j = 0; j < t_persons.Length; j++)
+                        for (int j = 0; j < tempPersons.Length; j++)
                         {
-                            t_persons[j] = new Person();
-                            t_persons[j].MakeClone(persons[j]);
+                            tempPersons[j] = persons[j].Clone() as Person;
                         }
-
-                        // make cloned calendars;
-                        t_shiftCal.shifts = shiftCal.shifts;
-                        t_prefCal.shifts = prefCal.shifts;
-
+                        // HACK 2. Fill the variables with the cloned data if not done already
+                            // persons
+                            // tempshiftscal
+                            // tempprefcal
+                    
 
                         foreach (int p in canSwitch)
                         {
@@ -521,16 +523,16 @@ namespace Shift
                         if (thisPerson != -1)
                         {
                             // entry point for next action
-                            bool tripleSwapAttempt = TryApplyingTripleSwap(thisPerson, problemShiftIndex, t_persons, t_shiftCal, t_prefCal, queue);
+                            bool tripleSwapAttempt = TryApplyingTripleSwap(thisPerson, problemShiftIndex, tempPersons, tempShiftCal, tempPrefCal, queue);
 
                             // SUCCESS overwrite values
                             if (tripleSwapAttempt == true)
                             {
                                 // DEBUG
                                 Console.WriteLine("Triple swap completed");
-                                persons = t_persons;
-                                shiftCal = t_shiftCal;
-                                prefCal = t_prefCal;
+                                persons = tempPersons;
+                                shiftCal = tempShiftCal;
+                                prefCal = tempPrefCal;
                                 success = true;
                                 break;
                             }
@@ -769,7 +771,7 @@ namespace Shift
         {
             foreach (Person p in persons)
             {
-                Console.WriteLine(p.GetName());
+                Console.WriteLine(p.name);
             }
         }
     }

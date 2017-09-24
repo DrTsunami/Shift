@@ -150,7 +150,8 @@ namespace Shift
         private static String CreateCopy(Excel.Workbook wb)
         {
             // TODO give a file location
-            String path = @"C:\Users\Ryan\Desktop\ShiftOutput.xlsx";
+            // String path = @"C:\Users\Ryan\Desktop\ShiftOutput.xlsx"
+            String path = @"C:\Users\rvtsa\Desktop\ShiftOutput.xlsx";
             wb.SaveCopyAs(path);
             return path;
         }
