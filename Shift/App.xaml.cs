@@ -113,7 +113,7 @@ namespace Shift
             List<int> noAssignment = new List<int>();
             s.AssignShifts(prefCal, shiftCalendar, persons, noAssignment, out List<int> queue);
 
-            // Print final data
+            // Print primary data
             Console.WriteLine("----------------------------------------");
             Console.WriteLine("PRIMARY RESULTS");
             shiftCalendar.ConsoleOut();
@@ -126,9 +126,18 @@ namespace Shift
             // if the calendar still doesn't work... go to secondary preferences.
             if (noAssignment.Count > 0)
             {
-                s.AssignSecondaryShifts(prefCal, shiftCalendar, persons, noAssignment, queue);
+                s.AssignSecondaryShifts(prefCal, shiftCalendar, persons, out noAssignment, queue);
             }
 
+            // Print secondary data
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine("SECONDARY RESULTS");
+            shiftCalendar.ConsoleOut();
+            Console.WriteLine("Unassigned People: ");
+            foreach (int i in noAssignment)
+            {
+                Console.WriteLine(persons[i].name);
+            }
             ////////////////////////////////////////////////////////////////
             // CLEANUP
             ////////////////////////////////////////////////////////////////

@@ -52,7 +52,7 @@ namespace Shift
             */
 
             // converts preferences into int array with preferences
-            return PrefsToShiftNums(day, time);
+            return StringPrefsToShiftNums(day, time);
         } // end parse
 
         /**
@@ -151,10 +151,37 @@ namespace Shift
             return prefCal;
         } // end SortMostPreferred
 
+        /*
+         * Returns a prefCal for secondary shifts 
+         */
+        public Calendar SecondarySortMostPreferred(Person[] persons, Calendar oldPrefCal)
+        {
+            Calendar newPrefCal = new Calendar();
+
+            foreach (Person p in persons)
+            {
+                if (!p.assigned)
+                {
+                    foreach (int s in p.primaryPrefs)
+                    {
+                        int shift = ShiftToArrayNum(s);
+                        // HACK need to figure out why the index is out of bounds here. happens on like the last iteration through the foreach loop.
+                        if (oldPrefCal.shifts[shift] >= 0)
+                        {
+                            newPrefCal.shifts[ShiftToArrayNum(shift)]++;
+                        }
+                    }
+                }
+            }
+
+            // return calendar with indexes filled with preferences
+            return newPrefCal;
+        }
+
 
 
         // takes a one set of prefs (with days and times in separate arrays with same indexes) and converts to number system
-        public int[] PrefsToShiftNums(String[] days, String[] times)
+        public int[] StringPrefsToShiftNums(String[] days, String[] times)
         {
             int prefCount = days.Length;
             int[] prefsAsShiftNums = new int[prefCount];

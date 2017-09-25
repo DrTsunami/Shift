@@ -136,7 +136,7 @@ namespace Shift
          * @param persons Persons passed from the primary assignements
          */
         public void AssignSecondaryShifts(Calendar prefCal, Calendar shiftCal, Person[] persons,
-            List<int> unassigned, List<int> queue)
+            out List<int> unassigned, List<int> queue)
         {
             // we edit every persons' preferences based on whether they're assigned or unassigned
             foreach (Person p in persons)
@@ -151,7 +151,7 @@ namespace Shift
 
                     for (int i = 0; i < p.secondaryPrefs.Length; i++)
                     {
-                        totalPrefs[i + (p.primaryPrefs.Length - 1)] = p.secondaryPrefs[i];
+                        totalPrefs[i + p.primaryPrefs.Length] = p.secondaryPrefs[i];
                     }
 
                     p.primaryPrefs = totalPrefs;
@@ -169,7 +169,7 @@ namespace Shift
 
                     for (int i = 0; i < p.secondaryPrefs.Length; i++)
                     {
-                        totalPrefs[i + (p.primaryPrefsBak.Length - 1)] = p.secondaryPrefs[i];
+                        totalPrefs[i + p.primaryPrefsBak.Length] = p.secondaryPrefs[i];
                     }
 
                     p.primaryPrefsBak = totalPrefs;
@@ -180,14 +180,14 @@ namespace Shift
             List<int> unassignedShifts = new List<int>();
             for (int i = 0; i < shiftCal.shifts.Length; i++)
             {
-                if (i == -1)
+                if (shiftCal.shifts[i] == -1)
                 {
                     unassignedShifts.Add(i);
                 }
             }
 
             // set up the prefCal
-            prefCal = dp.SortMostPreferred(persons);
+            prefCal = dp.SecondarySortMostPreferred(persons, prefCal);
             for (int i = 0; i < prefCal.shifts.Length; i++)
             {
                 if (shiftCal.shifts[i] >= 0)
@@ -244,20 +244,22 @@ namespace Shift
                         TryTripleSwap(shiftIndex, persons, queue, shiftCal, prefCal);
                         Console.WriteLine("Triple Swap Attempted");
                     }
-
-                    /*
-                    if (!conflictResolutionSuccess)
-                    {
-
-                    }
-                    */
-
                 }
 
                 queue.Add(shiftIndex);
                 // DEBUG
                 Console.WriteLine("Least Preferred Index: " + shiftIndex + "\t" + "Least Preferred Count" + leastPreferred);
                 prefCal.ConsoleOut();
+            }
+
+            // cycle through all the people in persons and create list of people without assigned spots
+            unassigned = new List<int>();
+            for (int i = 0; i < persons.Length; i++)
+            {
+                if (!persons[i].assigned)
+                {
+                    unassigned.Add(i);
+                }
             }
         }
 
