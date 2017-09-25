@@ -14,25 +14,29 @@ namespace Shift
     public class Person : ICloneable
     {
         public String name;
-        public int[] prefs;
+        public int[] primaryPrefs;
+        public int[] secondaryPrefs;
         public DateTime timestamp;
         public int seniority;
         public bool assigned = false;
         public int shiftAssigned = -1;
 
         // backup vars
-        public int[] prefsBak;
+        public int[] primaryPrefsBak;
+        public int[] secondaryPrefsBak;
 
         public Person() { }
 
-        public Person(String name, int[] prefs, DateTime timestamp, int seniority)
+        public Person(String name, int[] primaryPrefs, int[] secondaryPrefs, DateTime timestamp, int seniority)
         {
             this.name = name;
-            this.prefs = prefs;
+            this.primaryPrefs = primaryPrefs;
+            this.secondaryPrefs = secondaryPrefs;
             this.timestamp = timestamp;
             this.seniority = seniority;
 
-            prefsBak = new int[prefs.Length];
+            primaryPrefsBak = new int[primaryPrefs.Length];
+            secondaryPrefsBak = new int[secondaryPrefs.Length];
         }
 
         // Cloning method
@@ -64,21 +68,29 @@ namespace Shift
             shiftAssigned = shiftIndex;
         }
 
-        public void HidePrefs()
+        public void HidePrimaryPrefs()
         {
             // make backup
-            prefsBak = prefs;
+            primaryPrefsBak = primaryPrefs;
 
             // Destroy current pref
-            prefs = new int[0];
+            primaryPrefs = new int[0];
             assigned = true;
         }
 
-        public void Restore()
+        public void HideSecondaryPrefs()
+        {
+            // make backup, destroy prefs, and mark assigned
+            secondaryPrefsBak = secondaryPrefs;
+            secondaryPrefs = new int[0];
+            assigned = true;
+        }
+
+        public void RestorePrimaryPrefs()
         {
             if (assigned)
             {
-                prefs = prefsBak;
+                primaryPrefs = primaryPrefsBak;
             }
             else
             {
@@ -90,14 +102,20 @@ namespace Shift
         {
             System.Console.WriteLine(name);
 
-            System.Console.Write("Preferences: ");
+            System.Console.Write("Primary Preferences: ");
 
-            foreach (int i in prefs)
+            foreach (int i in primaryPrefs)
             {
                 System.Console.Write(i + " ");
             }
 
             System.Console.WriteLine();
+
+            System.Console.Write("Secondary Preferences: ");
+            foreach (int i in secondaryPrefs)
+            {
+                System.Console.Write(i + " ");
+            }
 
             System.Console.WriteLine("Timestamp: " + timestamp);
             System.Console.WriteLine("Seniority: " + seniority);

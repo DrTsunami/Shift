@@ -61,27 +61,29 @@ namespace Shift
 
             // Excel Data
 
-            // EDIT
+            // EDIT: change the column numbers here
             int timestampCol = 1;
             int nameCol = 2;
-            int prefCol = 4;   
             int seniorityCol = 3;
+            int primaryPrefCol = 4;
+            int secondaryPrefCol = 5;
 
             dp.ConvertAndWriteSeniority(xlWorksheet, seniorityCol, personCount);
 
             // create arrays of data from the excel sheet
             String[] names = new String[personCount];
-            String[] prefs = new String[personCount];
+            String[] primaryPrefs = new String[personCount];
+            String[] secondaryPrefs = new String[personCount];
             DateTime[] timestamps = new DateTime[personCount];
             int[] seniority = new int[personCount];
 
             try
             {
                 names = s.GetStringData(xlWorksheet, nameCol, personCount);
-                prefs = s.GetStringData(xlWorksheet, prefCol, personCount);
+                primaryPrefs = s.GetStringData(xlWorksheet, primaryPrefCol, personCount);
+                secondaryPrefs = s.GetStringData(xlWorksheet, secondaryPrefCol, personCount);
                 timestamps = s.GetTimestampData(xlWorksheet, timestampCol, personCount);
                 seniority = s.GetIntData(xlWorksheet, seniorityCol, personCount);
-
             }
 
             catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
@@ -99,26 +101,32 @@ namespace Shift
             s.CheckDataRange(xlRange);
 
             // Create and print people
-            persons = s.CreatePersons(names, prefs, timestamps, seniority);
+            persons = s.CreatePersons(names, primaryPrefs, secondaryPrefs, timestamps, seniority);
             s.ShowPeople(persons);
 
             // DEBUG-ish: print supposedly working calender #firsttry????
-            Calendar testCalendar = dp.SortMostPreferred(persons);
-            testCalendar.ConsoleOut();
+            Calendar prefCal = dp.SortMostPreferred(persons);
+            prefCal.ConsoleOut();
 
             // Initialize vars to start assigning shifts
             Calendar shiftCalendar = new Calendar();
-            List<int> unassigned = new List<int>();
-            s.AssignShifts(testCalendar, shiftCalendar, persons, unassigned);
+            List<int> noAssignment = new List<int>();
+            s.AssignShifts(prefCal, shiftCalendar, persons, noAssignment, out List<int> queue);
 
             // Print final data
             Console.WriteLine("----------------------------------------");
-            Console.WriteLine("RESULTS");
+            Console.WriteLine("PRIMARY RESULTS");
             shiftCalendar.ConsoleOut();
             Console.WriteLine("Unassigned People: ");
-            foreach (int i in unassigned)
+            foreach (int i in noAssignment)
             {
                 Console.WriteLine(persons[i].name);
+            }
+
+            // if the calendar still doesn't work... go to secondary preferences.
+            if (noAssignment.Count > 0)
+            {
+                s.AssignSecondaryShifts(prefCal, shiftCalendar, persons, noAssignment, queue);
             }
 
             ////////////////////////////////////////////////////////////////

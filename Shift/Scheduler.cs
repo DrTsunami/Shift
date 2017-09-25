@@ -42,13 +42,13 @@ namespace Shift
          * which shift is currently least desired. If person is available, prioritizes and assigns. If no one available
          * Conflict resolution is called to handle rearrangements.
          */
-        public void AssignShifts(Calendar prefCal, Calendar shiftCal, Person[] persons, List<int> unassigned)
+        public void AssignShifts(Calendar prefCal, Calendar shiftCal, Person[] persons, List<int> noAssignment , out List<int> queue)
         {
             /////////////////////////////////////////////
             // Vars
             /////////////////////////////////////////////
 
-            List<int> queue = new List<int>();
+            queue = new List<int>();
 
             /////////////////////////////////////////////
 
@@ -122,11 +122,144 @@ namespace Shift
             {
                 if (!persons[i].assigned)
                 {
-                    unassigned.Add(i);
+                    noAssignment.Add(i);
                 }
             }
 
         } // end AssignShifts
+
+        /**
+         * Assign secondary shifts if the primary shifts don't work.
+         * 
+         * @param prefCal Preference Calendar ideally filled out with just -2 as unassigned
+         * @param shiftCal Shift Calendar filled out with all preferences and -1 for unassigned
+         * @param persons Persons passed from the primary assignements
+         */
+        public void AssignSecondaryShifts(Calendar prefCal, Calendar shiftCal, Person[] persons,
+            List<int> unassigned, List<int> queue)
+        {
+            // we edit every persons' preferences based on whether they're assigned or unassigned
+            foreach (Person p in persons)
+            {
+                if (!p.assigned)
+                {
+                    int[] totalPrefs = new int[p.primaryPrefs.Length + p.secondaryPrefs.Length];
+                    for (int i = 0; i < p.primaryPrefs.Length; i++)
+                    {
+                        totalPrefs[i] = p.primaryPrefs[i];
+                    }
+
+                    for (int i = 0; i < p.secondaryPrefs.Length; i++)
+                    {
+                        totalPrefs[i + (p.primaryPrefs.Length - 1)] = p.secondaryPrefs[i];
+                    }
+
+                    p.primaryPrefs = totalPrefs;
+
+                }
+                else
+                {
+                    // if person has been assigned, has a primaryPrefsBak and secondaryPrefs, send all to primaryPrefsBak
+                    int[] totalPrefs = new int[p.primaryPrefsBak.Length + p.secondaryPrefs.Length];
+
+                    for (int i = 0; i < p.primaryPrefsBak.Length; i++)
+                    {
+                        totalPrefs[i] = p.primaryPrefsBak[i];
+                    }
+
+                    for (int i = 0; i < p.secondaryPrefs.Length; i++)
+                    {
+                        totalPrefs[i + (p.primaryPrefsBak.Length - 1)] = p.secondaryPrefs[i];
+                    }
+
+                    p.primaryPrefsBak = totalPrefs;
+                }
+            }
+
+            // Get remaining shifts and iterate through that list using a for loop
+            List<int> unassignedShifts = new List<int>();
+            for (int i = 0; i < shiftCal.shifts.Length; i++)
+            {
+                if (i == -1)
+                {
+                    unassignedShifts.Add(i);
+                }
+            }
+
+            // set up the prefCal
+            prefCal = dp.SortMostPreferred(persons);
+            for (int i = 0; i < prefCal.shifts.Length; i++)
+            {
+                if (shiftCal.shifts[i] >= 0)
+                {
+                    // if the shift is already assigned, set the prefCal shift to -1
+                    prefCal.shifts[i] = -1;
+                }
+            }
+
+            for (int i = 0; i < unassignedShifts.Count; i++)
+            {
+                // assign shifts as we did before
+                int leastPreferred = 99;
+                int shiftIndex = 0;
+                for (int pref = 0; pref < prefCal.shifts.Length; pref++)
+                {
+                    if (prefCal.shifts[pref] < leastPreferred && prefCal.shifts[pref] >= 0)
+                    {
+                        leastPreferred = prefCal.shifts[pref];
+                        shiftIndex = pref;
+                    }
+                }
+
+                // BEGIN process of assigning shift
+                // list of people who prefer the current shift being examined
+
+                List<int> peoplePref = new List<int>();
+                peoplePref = GetPeoplePref(persons, shiftIndex);
+
+                // allow for conflicts
+                if (peoplePref.Count > 0)
+                {
+                    int personAssignedIndex = GetTopPriorityPerson(peoplePref, persons);
+
+                    // assign person. Set in calendar and update person with shift
+                    AssignPerson(personAssignedIndex, shiftIndex, persons, shiftCal);
+
+                    // remove 1 from each of preferences and destroy person
+                    CleanPerson(persons[personAssignedIndex], prefCal);
+
+                    // set the shift as taken
+                    prefCal.shifts[shiftIndex] = -1;
+                }
+                else // if no people available to take shift 
+                {
+                    Console.WriteLine("CONFLICT");
+
+                    // DEBUG
+                    // prefCal.shifts[shiftIndex] = -2;
+
+
+                    if (!TrySingleSwap(shiftIndex, persons, queue, shiftCal, prefCal))
+                    {
+                        TryTripleSwap(shiftIndex, persons, queue, shiftCal, prefCal);
+                        Console.WriteLine("Triple Swap Attempted");
+                    }
+
+                    /*
+                    if (!conflictResolutionSuccess)
+                    {
+
+                    }
+                    */
+
+                }
+
+                queue.Add(shiftIndex);
+                // DEBUG
+                Console.WriteLine("Least Preferred Index: " + shiftIndex + "\t" + "Least Preferred Count" + leastPreferred);
+                prefCal.ConsoleOut();
+            }
+        }
 
         /**
          * Assign a person to a shift in a calendar and write the shift assigned to the person
@@ -154,7 +287,7 @@ namespace Shift
         public void CleanPerson(Person p, Calendar prefCal)
         {
             // remove 1 from each of preferences
-            foreach (int pref in p.prefs)
+            foreach (int pref in p.primaryPrefs)
             {
                 int prefNum = dp.ShiftToArrayNum(pref);
                 // to account for preferences that are already assigned
@@ -177,7 +310,7 @@ namespace Shift
              *      allowing for each object to have data restored if need be.
              * NOTE: potential problem... forgot what it was
              */
-            p.HidePrefs();
+            p.HidePrimaryPrefs();
         }
 
         /**
@@ -274,7 +407,7 @@ namespace Shift
 
             for (int i = 0; i < persons.Length; i++)
             {
-                foreach (int pref in persons[i].prefs)
+                foreach (int pref in persons[i].primaryPrefs)
                 {
                     if (dp.ShiftToArrayNum(pref) == shiftNum)
                     {
@@ -406,7 +539,7 @@ namespace Shift
 
             if (shiftCal.shifts[thisShift] != -1)
             {
-                foreach (int pref in persons[potentialFillIndex].prefsBak)
+                foreach (int pref in persons[potentialFillIndex].primaryPrefsBak)
                 {
                     int convertedPref = dp.ShiftToArrayNum(pref);
                     if (convertedPref == shiftToFillIndex)   // if potentialFill had preferred shiftToFill
@@ -628,7 +761,7 @@ namespace Shift
 
             foreach (int pIndex in assigned)
             {
-                foreach (int prefIndex in persons[pIndex].prefsBak)
+                foreach (int prefIndex in persons[pIndex].primaryPrefsBak)
                 {
                     int shiftPref = dp.ShiftToArrayNum(prefIndex);
                     if (toFillIndex == shiftPref)
@@ -722,16 +855,17 @@ namespace Shift
          * @param timeStamps Datetime array of timestamps 
          * @param seniority int array of seniority
          */
-        public Person[] CreatePersons(String[] names, String[] stringPrefs, DateTime[] timestamps, int[] seniority)
+        public Person[] CreatePersons(String[] names, String[] stringPrimaryPrefs, String[] stringSecondaryPrefs, DateTime[] timestamps, int[] seniority)
         {
             Person[] persons = new Person[names.Length];
 
             for (int i = 0; i < names.Length; i++)
             {
-                int[] prefs = dp.ParsePrefs(stringPrefs[i]);
+                int[] primaryPrefs = dp.ParsePrefs(stringPrimaryPrefs[i]);
+                int[] secondaryPrefs = dp.ParsePrefs(stringSecondaryPrefs[i]);
 
                 // creates person
-                persons[i] = new Person(names[i], prefs, timestamps[i], seniority[i]);
+                persons[i] = new Person(names[i], primaryPrefs, secondaryPrefs, timestamps[i], seniority[i]);
             }
             return persons;
         }

@@ -137,9 +137,13 @@ namespace Shift
 
             foreach (Person p in persons)
             { 
-                foreach (int shift in p.prefs)
+                if (!p.assigned)
                 {
-                    prefCal.shifts[ShiftToArrayNum(shift)]++;
+                    foreach (int shift in p.primaryPrefs)
+                    {
+                        // HACK need to figure out why the index is out of bounds here. happens on like the last iteration through the foreach loop.
+                        prefCal.shifts[ShiftToArrayNum(shift)]++;
+                    }
                 }
             }
 
