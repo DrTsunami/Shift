@@ -4,11 +4,6 @@
  * Object that holds all the methods to scheduling, assigning shifts and conflict resolution
  * 
  * 
- * todo list
- * HACK need to smoothly pass off between the first priority column to second priority column to fill any other missing
- *      shifts.
- *      
- * TODO need to add capability of user input for shifts.
  */
 
 using System;

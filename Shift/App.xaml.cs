@@ -1,4 +1,13 @@
-﻿using System;
+﻿/**
+  *
+  * todo list
+  *      
+  * TODO need to add capability of user input for shifts.
+  * 
+  * TODO print out to excel
+  */
+
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -138,12 +147,72 @@ namespace Shift
             {
                 Console.WriteLine(persons[i].name);
             }
+
             ////////////////////////////////////////////////////////////////
-            // CLEANUP
+            // OUTPUT AND CLEANUP
             ////////////////////////////////////////////////////////////////
 
+            WriteOutput(xlWorkbook, shiftCalendar, persons);
             SaveOutput(xlWorkbook);
             XlCleanup(xlApp, xlWorkbook, xlWorksheet, xlRange);
+        }
+
+        private static void WriteOutput(Excel.Workbook wb, Calendar shiftCal, Person[] persons)
+        {
+            Excel.Worksheet outSheet;
+            outSheet = (Excel.Worksheet)wb.Worksheets.Add();
+
+            // fill out the day and times
+            (outSheet.Cells[1, 2] as Excel.Range).Value = "Mon";
+            (outSheet.Cells[1, 3] as Excel.Range).Value = "Tue";
+            (outSheet.Cells[1, 4] as Excel.Range).Value = "Wed";
+            (outSheet.Cells[1, 5] as Excel.Range).Value = "Thur";
+            (outSheet.Cells[1, 6] as Excel.Range).Value = "Fri";
+            (outSheet.Cells[1, 7] as Excel.Range).Value = "Sat";
+            (outSheet.Cells[1, 8] as Excel.Range).Value = "Sun";
+
+            (outSheet.Cells[2, 1] as Excel.Range).Value = "8am-12pm";
+            (outSheet.Cells[3, 1] as Excel.Range).Value = "12pm-4pm";
+            (outSheet.Cells[4, 1] as Excel.Range).Value = "4pm-8pm";
+            (outSheet.Cells[5, 1] as Excel.Range).Value = "8pm-12am";
+
+            // fill out people into the sheet
+            int day = 1;
+            int counter = 0;
+            for (int i = 0; i < shiftCal.shifts.Length; i++)
+            {
+                int rowTime;    // the row
+                int colDay;     // the time
+
+                // counter will be either 0, 1, 2, 3 (early -> late)
+                counter = i % 4;
+
+                // assign the day
+                if (counter == 0)
+                {
+                    day++;
+                }
+
+                colDay = day;
+                rowTime = counter + 2;
+
+                // assign the person. i is the index of the shift. 
+                Person p = persons[shiftCal.shifts[i]];
+                (outSheet.Cells[rowTime, colDay] as Excel.Range).Value = p.name;
+            }
+            
+
+            // styles
+            (outSheet.Cells[1, 2] as Excel.Range).EntireRow.Font.Bold = true;
+            (outSheet.Cells[2, 1] as Excel.Range).EntireColumn.Font.Bold = true;
+
+            int activeRange = 9;
+            for (int i = 1; i < activeRange; i++)
+            {
+                (outSheet.Cells[1, i] as Excel.Range).EntireColumn.AutoFit();
+            }
+
+
         }
 
         private static void SaveOutput(Excel.Workbook wb)
