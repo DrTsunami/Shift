@@ -623,10 +623,6 @@ namespace Shift
                         int q = queue[i];
                         int onShift = shiftCal.shifts[q];
 
-                        // HACK 1. Initializes the clones, or at least the variables of clones.
-                        // persons
-                        // tempshiftscal
-                        // tempprefcal
                         Calendar tempShiftCal = shiftCal.Clone() as Calendar;
                         Calendar tempPrefCal = prefCal.Clone() as Calendar;
                         Person[] tempPersons = new Person[persons.Length];
@@ -635,11 +631,6 @@ namespace Shift
                         {
                             tempPersons[j] = persons[j].Clone() as Person;
                         }
-                        // HACK 2. Fill the variables with the cloned data if not done already
-                            // persons
-                            // tempshiftscal
-                            // tempprefcal
-                    
 
                         foreach (int p in canSwitch)
                         {
@@ -709,7 +700,6 @@ namespace Shift
             AssignPerson(fillPerson, problemShiftIndex, testPersons, tempShiftCal);
 
             // clean the previous shift
-            // HACK fix this out of bounds error
             tempShiftCal.shifts[newShiftToFill] = -5;    // aribitrarily chose -5 for recognition purposes
 
             // try to do a 2 person swap.

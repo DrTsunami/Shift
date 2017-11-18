@@ -8,7 +8,8 @@
         Title="MainWindow" Height="350" Width="525">
     <Grid>
         <Button x:Name="button" Content="Button" HorizontalAlignment="Center" Margin="221,132,221,0" VerticalAlignment="Top" Width="75" Click="button_Click"/>
-        <Button x:Name="Reformat" Content="Reformat" HorizontalAlignment="Center" VerticalAlignment="Top" Width="75" Margin="221,193,221,106" Click="button1_Click" Padding="1" Grid.IsSharedSizeScope="True"/>
+        <Button x:Name="Reformat" Content="Reformat" HorizontalAlignment="Center" VerticalAlignment="Top" Width="75" Margin="221,170,221,0" Click="button1_Click" Padding="1" Grid.IsSharedSizeScope="True"/>
+        <Button x:Name="OutputPath" Content="Output Path" HorizontalAlignment="Left" Margin="221,211,0,0" VerticalAlignment="Top" Width="76" Click="OutputPath_Click"/>
 
     </Grid>
 </Window>

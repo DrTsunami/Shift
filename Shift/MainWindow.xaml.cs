@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -57,7 +58,7 @@ namespace Shift
                 } else
                 {
                     Console.WriteLine("ERROR: file not verified. Please verify file");
-                    MessageBox.Show("File not verified, please verify file by inputting '[VERIFIED]' in the cell [1, 40]");
+                    System.Windows.MessageBox.Show("File not verified, please verify file by inputting '[VERIFIED]' in the cell [1, 40]");
                 }
             }
         }
@@ -123,6 +124,18 @@ namespace Shift
             xlApp.Quit();
             Marshal.ReleaseComObject(xlApp);
             Console.WriteLine("objects released");
+        }
+
+        private void OutputPath_Click(object sender, RoutedEventArgs e)
+        {
+            // create folder browser dialog
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+
+            // 
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                App.outPath = fbd.SelectedPath;
+            }
         }
     }
 }

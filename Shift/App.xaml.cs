@@ -2,9 +2,6 @@
   *
   * todo list
   *      
-  * TODO need to add capability of user input for shifts.
-  * 
-  * TODO print out to excel
   */
 
 using System;
@@ -26,8 +23,9 @@ namespace Shift
     public partial class App : Application
     {
         // TODO make this an input box
-        public static int thisYear = 2017; // CHANGE THIS WHEN YEAR CHANGES
+        public static int thisYear = 2017; // HACK THIS: CHANGE THIS WHEN YEAR CHANGES
         public static int thisSeason = 4; // 1. winter, 2. spring, 3. summer, 4. fall
+        public static String outPath = "";
 
         public static void Start(String path)
         {
@@ -235,11 +233,24 @@ namespace Shift
 
         private static String CreateCopy(Excel.Workbook wb)
         {
-            // TODO give a file location
-            // String path = @"C:\Users\Ryan\Desktop\ShiftOutput.xlsx"
-            String path = @"C:\Users\rvtsa\Desktop\ShiftOutput.xlsx";
-            wb.SaveCopyAs(path);
-            return path;
+            // HACK give a file location
+            // String path = @"C:\Users\Ryan\Desktop\ShiftOutput.xlsx";
+            //String path = @"C:\Users\rvtsa\Desktop\ShiftOutput.xlsx";
+            // wb.SaveCopyAs(path);
+
+            
+            if (outPath != null)
+            {
+                String outputPath = (outPath + "ShiftOutput.xlsx");
+                wb.SaveCopyAs(@outputPath);
+                return @outputPath;
+            } else
+            {
+                Console.WriteLine("ERROR: you don't have a path selected");
+                return "null";
+            }
+            
+            // return path;
         }
     }
 }

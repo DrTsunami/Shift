@@ -141,7 +141,6 @@ namespace Shift
                 {
                     foreach (int shift in p.primaryPrefs)
                     {
-                        // HACK need to figure out why the index is out of bounds here. happens on like the last iteration through the foreach loop.
                         prefCal.shifts[ShiftToArrayNum(shift)]++;
                     }
                 }
@@ -165,7 +164,6 @@ namespace Shift
                     foreach (int s in p.primaryPrefs)
                     {
                         int shift = ShiftToArrayNum(s);
-                        // HACK need to figure out why the index is out of bounds here. happens on like the last iteration through the foreach loop.
                         if (oldPrefCal.shifts[shift] >= 0)
                         {
                             newPrefCal.shifts[ShiftToArrayNum(shift)]++;
