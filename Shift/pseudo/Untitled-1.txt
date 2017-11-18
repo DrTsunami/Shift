@@ -1,0 +1,48 @@
+boolean myBool = true;
+
+if (myBool == true) 
+{
+
+    print("dank")
+
+} else {
+
+    print("memes")
+
+}
+
+
+int numOne = 5;
+int numTwo = 10;
+
+if (numOne > numTwo)    // this is another way to apply a conditional
+{
+    print ("bigger")
+} else {
+    print ("not bigger")
+}
+
+
+int numOne = 5;
+int numTwo = 10;
+int numThree = 5;
+
+if (numOne > numThree) {
+{
+
+    print ("bigger")
+
+} else if (numOne < numThree) {
+
+    print ("not bigger")
+
+} else  // if (numOne == numThree)
+{
+    print ("equal")
+}
+
+
+
+
+
+
