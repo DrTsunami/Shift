@@ -195,8 +195,16 @@ namespace Shift
                 rowTime = counter + 2;
 
                 // assign the person. i is the index of the shift. 
-                Person p = persons[shiftCal.shifts[i]];
-                (outSheet.Cells[rowTime, colDay] as Excel.Range).Value = p.name;
+                if (shiftCal.shifts[i] != -1)
+                {
+                    Person p = persons[shiftCal.shifts[i]];
+                    (outSheet.Cells[rowTime, colDay] as Excel.Range).Value = p.name;
+                } else
+                {
+                    (outSheet.Cells[rowTime, colDay] as Excel.Range).Value = "unassigned";
+                }
+                
+                
             }
             
 
@@ -233,12 +241,11 @@ namespace Shift
 
         private static String CreateCopy(Excel.Workbook wb)
         {
-            // HACK give a file location
             // String path = @"C:\Users\Ryan\Desktop\ShiftOutput.xlsx";
-            //String path = @"C:\Users\rvtsa\Desktop\ShiftOutput.xlsx";
-            // wb.SaveCopyAs(path);
+            String path = @"C:\Users\rvtsa\Desktop\ShiftOutput.xlsx";
+            wb.SaveCopyAs(path);
 
-            
+            /*
             if (outPath != null)
             {
                 String outputPath = (outPath + "ShiftOutput.xlsx");
@@ -249,8 +256,11 @@ namespace Shift
                 Console.WriteLine("ERROR: you don't have a path selected");
                 return "null";
             }
+            */
             
-            // return path;
+            // HACK please print out who is unassigned to the excel sheet
+
+            return path;
         }
     }
 }
