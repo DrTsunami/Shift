@@ -77,8 +77,8 @@ namespace Shift
 
             // Parse the data for seniority
 
-            int thisYear = 2017; // CHANGE THIS WHEN YEAR CHANGES
-            int thisSeason = 4; // 1. winter, 2. spring, 3. summer, 4. fall
+            int thisYear = 2018; // HACK CHANGE THIS WHEN YEAR CHANGES
+            int thisSeason = 1; // HACK 1. winter, 2. spring, 3. summer, 4. fall
 
             char[] delim = { ',', ' ' };
             int[] year = new int[seniorData.Length];
